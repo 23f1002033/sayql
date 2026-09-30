@@ -24,9 +24,9 @@ TOKEN_URL = "https://agents.assemblyai.com/v1/token"
 # free-tier instance; a seam for Phase-later work would move this to Redis
 # if the app ever runs multiple worker processes, since counts would no
 # longer be shared across them.
-RATE_LIMIT_PER_IP = 3
+RATE_LIMIT_PER_IP = 8
 RATE_LIMIT_WINDOW_SECONDS = 10 * 60
-DAILY_LIMIT_GLOBAL = 150
+DAILY_LIMIT_GLOBAL = 300
 DAILY_WINDOW_SECONDS = 24 * 60 * 60
 
 _ip_request_times: dict[str, deque] = defaultdict(deque)
@@ -43,6 +43,17 @@ def _client_ip(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
+def _format_retry_after(seconds: float) -> str:
+    seconds = max(0, int(seconds))
+    if seconds < 60:
+        return f"{seconds} second{'s' if seconds != 1 else ''}"
+    minutes = (seconds + 59) // 60  # round up, so "try again" is never too early
+    if minutes < 60:
+        return f"{minutes} minute{'s' if minutes != 1 else ''}"
+    hours = (minutes + 59) // 60
+    return f"{hours} hour{'s' if hours != 1 else ''}"
+
+
 def _check_rate_limit(ip: str):
     now = time.monotonic()
 
@@ -50,12 +61,14 @@ def _check_rate_limit(ip: str):
     while ip_times and now - ip_times[0] > RATE_LIMIT_WINDOW_SECONDS:
         ip_times.popleft()
     if len(ip_times) >= RATE_LIMIT_PER_IP:
-        return False, "Too many voice sessions from your connection. Wait a few minutes and try again."
+        retry_in = _format_retry_after(RATE_LIMIT_WINDOW_SECONDS - (now - ip_times[0]))
+        return False, f"Too many voice sessions from your connection. Try again in about {retry_in}."
 
     while _global_request_times and now - _global_request_times[0] > DAILY_WINDOW_SECONDS:
         _global_request_times.popleft()
     if len(_global_request_times) >= DAILY_LIMIT_GLOBAL:
-        return False, "This demo has reached its limit of voice sessions for today. Please try again tomorrow."
+        retry_in = _format_retry_after(DAILY_WINDOW_SECONDS - (now - _global_request_times[0]))
+        return False, f"This demo has reached its daily voice session limit. Try again in about {retry_in}."
 
     ip_times.append(now)
     _global_request_times.append(now)

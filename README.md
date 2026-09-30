@@ -122,7 +122,7 @@ questions in `evals/questions.yaml`.
   so the clarification options and example questions on screen are
   reminders of the wording, not clickable controls; every answer has to be
   spoken.
-- Rate limiting (3 tokens per IP per 10 minutes, 150 per day total) and
+- Rate limiting (8 tokens per IP per 10 minutes, 300 per day total) and
   in-memory session counters reset if the server restarts, and do not work
   correctly across more than one running instance.
 - The read-only SQL guard blocks writes and multi-statement input, but it
