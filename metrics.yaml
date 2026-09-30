@@ -1,0 +1,99 @@
+# Metric dictionary for SayQL.
+#
+# The agent must call get_metric before writing SQL for any of these terms.
+# The sql pattern below is a starting point: substitute concrete dates for
+# {start_date} and {end_date} (inclusive, format YYYY-MM-DD).
+
+metrics:
+  net_revenue:
+    aliases: ["net revenue", "revenue", "net sales", "sales"]
+    definition: >
+      Gross revenue from order items, minus the refunded amount for any
+      returned units, for orders placed in the period.
+    unit: currency
+    sql: >
+      SELECT SUM(oi.quantity * oi.unit_price) - COALESCE(SUM(r.quantity * oi.unit_price), 0) AS net_revenue
+      FROM order_items oi
+      JOIN orders o ON o.order_id = oi.order_id
+      LEFT JOIN returns r ON r.order_item_id = oi.order_item_id
+      WHERE o.order_date BETWEEN '{start_date}' AND '{end_date}'
+
+  gross_revenue:
+    aliases: ["gross revenue", "gross sales", "total sales"]
+    definition: >
+      Revenue from order items before subtracting returns, for orders
+      placed in the period.
+    unit: currency
+    sql: >
+      SELECT SUM(oi.quantity * oi.unit_price) AS gross_revenue
+      FROM order_items oi
+      JOIN orders o ON o.order_id = oi.order_id
+      WHERE o.order_date BETWEEN '{start_date}' AND '{end_date}'
+
+  refund_amount:
+    aliases: ["refund amount", "refunds", "amount refunded"]
+    definition: >
+      Value of units returned, based on the returns recorded in the
+      period (by return date, not order date).
+    unit: currency
+    sql: >
+      SELECT SUM(r.quantity * oi.unit_price) AS refund_amount
+      FROM returns r
+      JOIN order_items oi ON oi.order_item_id = r.order_item_id
+      WHERE r.return_date BETWEEN '{start_date}' AND '{end_date}'
+
+  return_rate:
+    aliases: ["return rate", "returns rate"]
+    definition: >
+      Units returned divided by units sold, for orders placed in the
+      period. Returned units are matched by order date, not return date.
+    unit: percent
+    sql: >
+      SELECT CAST(COALESCE(SUM(r.quantity), 0) AS REAL) / SUM(oi.quantity) AS return_rate
+      FROM order_items oi
+      JOIN orders o ON o.order_id = oi.order_id
+      LEFT JOIN returns r ON r.order_item_id = oi.order_item_id
+      WHERE o.order_date BETWEEN '{start_date}' AND '{end_date}'
+
+  aov:
+    aliases: ["aov", "average order value"]
+    definition: >
+      Gross revenue divided by the number of distinct orders placed in
+      the period.
+    unit: currency
+    sql: >
+      SELECT SUM(oi.quantity * oi.unit_price) / COUNT(DISTINCT o.order_id) AS aov
+      FROM order_items oi
+      JOIN orders o ON o.order_id = oi.order_id
+      WHERE o.order_date BETWEEN '{start_date}' AND '{end_date}'
+
+  active_customers:
+    aliases: ["active customers", "active customer count"]
+    definition: >
+      Distinct customers who placed at least one order in the period.
+    unit: count
+    sql: >
+      SELECT COUNT(DISTINCT o.customer_id) AS active_customers
+      FROM orders o
+      WHERE o.order_date BETWEEN '{start_date}' AND '{end_date}'
+
+  orders_count:
+    aliases: ["orders", "number of orders", "order count"]
+    definition: >
+      Count of orders placed in the period.
+    unit: count
+    sql: >
+      SELECT COUNT(*) AS orders_count
+      FROM orders o
+      WHERE o.order_date BETWEEN '{start_date}' AND '{end_date}'
+
+  units_sold:
+    aliases: ["units sold", "units", "quantity sold"]
+    definition: >
+      Total quantity of items sold in the period, before returns.
+    unit: count
+    sql: >
+      SELECT SUM(oi.quantity) AS units_sold
+      FROM order_items oi
+      JOIN orders o ON o.order_id = oi.order_id
+      WHERE o.order_date BETWEEN '{start_date}' AND '{end_date}'

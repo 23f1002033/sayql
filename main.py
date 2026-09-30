@@ -2,14 +2,23 @@ import os
 
 import httpx
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+
+import tools
 
 load_dotenv()
 
 ASSEMBLYAI_API_KEY = os.environ.get("ASSEMBLYAI_API_KEY", "")
 TOKEN_URL = "https://agents.assemblyai.com/v1/token"
+
+TOOL_FUNCTIONS = {
+    "list_tables": lambda args: tools.list_tables(),
+    "describe_table": lambda args: tools.describe_table(args.get("name", "")),
+    "get_metric": lambda args: tools.get_metric(args.get("term", "")),
+    "run_sql": lambda args: tools.run_sql(args.get("sql", "")),
+}
 
 app = FastAPI()
 
@@ -34,6 +43,21 @@ async def voice_token():
         )
 
     return resp.json()
+
+
+@app.post("/api/tool/{name}")
+async def call_tool(name: str, request: Request):
+    if name not in TOOL_FUNCTIONS:
+        return JSONResponse({"error": f"unknown tool: {name}"}, status_code=404)
+
+    try:
+        args = await request.json()
+    except Exception:
+        args = {}
+    if not isinstance(args, dict):
+        args = {}
+
+    return TOOL_FUNCTIONS[name](args)
 
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
