@@ -29,3 +29,77 @@ def test_case_and_whitespace_insensitive():
     result = resolve("  Net Revenue  ")
     assert result.status == "found"
     assert result.metric.name == "net_revenue"
+
+
+def test_plain_returns_resolves_to_refund_amount_currency():
+    result = resolve("returns")
+    assert result.status == "found"
+    assert result.metric.name == "refund_amount"
+    assert result.metric.unit == "currency"
+
+
+def test_how_many_returns_resolves_to_units_returned_count():
+    result = resolve("how many returns")
+    assert result.status == "found"
+    assert result.metric.name == "units_returned"
+    assert result.metric.unit == "count"
+
+
+def test_number_of_returns_resolves_to_units_returned_count():
+    result = resolve("number of returns")
+    assert result.status == "found"
+    assert result.metric.name == "units_returned"
+    assert result.metric.unit == "count"
+
+
+def test_return_count_resolves_to_units_returned_count():
+    result = resolve("return count")
+    assert result.status == "found"
+    assert result.metric.name == "units_returned"
+    assert result.metric.unit == "count"
+
+
+def test_refunds_resolves_to_refund_amount_currency():
+    result = resolve("refunds")
+    assert result.status == "found"
+    assert result.metric.name == "refund_amount"
+    assert result.metric.unit == "currency"
+
+
+def test_return_rate_resolves_to_return_rate_percent():
+    result = resolve("return rate")
+    assert result.metric.unit == "percent"
+
+
+def test_sales_is_not_ambiguous():
+    result = resolve("sales")
+    assert result.status == "found"
+    assert result.metric.name == "gross_revenue"
+
+
+def test_customers_resolves_to_active_customers():
+    result = resolve("customers")
+    assert result.status == "found"
+    assert result.metric.name == "active_customers"
+
+
+def test_kpi_narration_names_currency_unit():
+    import app.tools as tools
+
+    response = tools.query_metric({
+        "metric": "net_revenue",
+        "time_range": {"start": "2026-08-01", "end": "2026-08-31"},
+    })
+    # narration is spoken form ("50.8 lakh rupees"); card headline stays display form ("Rs 50.81 lakh")
+    assert "rupees" in response["card"]["narration_seed"]
+    assert "Rs" in response["card"]["headline_value"]
+
+
+def test_kpi_narration_names_count_unit():
+    import app.tools as tools
+
+    response = tools.query_metric({
+        "metric": "units_returned",
+        "time_range": {"start": "2026-09-01", "end": "2026-09-30"},
+    })
+    assert "units" in response["card"]["narration_seed"]

@@ -19,41 +19,26 @@ const SAMPLE_RATE = 24000;
 
 const SYSTEM_PROMPT = `You are SayQL, a voice analyst for a small D2C business owner.
 Today's date is 2026-09-30. Resolve relative date terms against it, using date ranges that cover full days:
-- "last week" means the 7 full days before today.
-- "last month" means the full previous calendar month.
-- "this month" means the current calendar month, from its start through today.
+- "last week" means the 7 full days before today, not including today (2026-09-23 through 2026-09-29).
+- "last month" means the full previous calendar month (2026-08-01 through 2026-08-31).
+- "this month" means 2026-09-01 through 2026-09-30. When comparing "this month" to another period, compare it against the previous full month (2026-08-01 through 2026-08-31).
 
 Rules:
-- Before writing SQL for any business term (net revenue, return rate, AOV, active customers, and similar), call get_metric first and use its definition and SQL pattern.
-- If get_metric does not find the term, ask one short clarifying question instead of guessing.
-- Before the first query that touches a table, call describe_table for that table.
-- Use run_sql to answer questions. It only accepts a single SELECT or WITH statement.
-- Keep spoken answers to three sentences or fewer. Round numbers for speech (for example, "about 4.2 lakh rupees").
-- Always say which metric definition you used when you state a business number.`;
+- Always call resolve_metric before querying any business term. If it returns an ambiguous result, ask the user one short question naming the options - do not guess which one they mean.
+- Use query_metric for KPI lookups, breakdowns by one dimension, and time trends.
+- For a "why did this change" question, call explain_change exactly once, then: state the overall change, name the top contributor and its share of the change (or, if explain_change returns a ratio decomposition, say which side - numerator or denominator - drove it), and mention one limit of the analysis (this shows correlation, not proven cause).
+- When a question names a specific product, pass it as a product_name filter (field: "product_name") and let the system resolve it. Never guess or make up a sku yourself. If the system comes back with a clarification (no match, or more than one match), ask the user to pick from the options given.
+- Use run_sql only as a fallback when query_metric cannot express the question.
+- Never state a number that did not come from a tool result.
+- Keep spoken answers to three sentences or fewer. Round numbers for speech, in lakh or crore for large rupee amounts.
+- Always say which metric definition you used, and name its unit (rupees, units, or percent) as given in the tool result - do not guess the unit yourself.`;
 
 const TOOLS = [
   {
     type: "function",
-    name: "list_tables",
-    description: "List the tables available in the database, with a short description of each.",
-    parameters: { type: "object", properties: {}, required: [] },
-  },
-  {
-    type: "function",
-    name: "describe_table",
+    name: "resolve_metric",
     description:
-      "Get the columns and row count for one table. Call this before the first query that touches a table.",
-    parameters: {
-      type: "object",
-      properties: { name: { type: "string", description: "table name" } },
-      required: ["name"],
-    },
-  },
-  {
-    type: "function",
-    name: "get_metric",
-    description:
-      "Look up the definition and SQL pattern for a business metric term (for example net revenue, return rate, AOV, active customers). Call this before writing SQL for any business term. If the term is not found, ask one short clarifying question instead of guessing.",
+      "Look up a business term against the metric dictionary. Returns the matched metric, an ambiguous result with options to ask about, or not_found. Always call this before query_metric or explain_change for any business term.",
     parameters: {
       type: "object",
       properties: { term: { type: "string", description: "the business term as the user said it" } },
@@ -62,13 +47,105 @@ const TOOLS = [
   },
   {
     type: "function",
+    name: "query_metric",
+    description:
+      "Run a metric query: a KPI lookup (no dimensions, no grain), a breakdown by one dimension (e.g. city or sku), or a time trend (set grain to day, week, or month). Use the exact metric name returned by resolve_metric.",
+    parameters: {
+      type: "object",
+      properties: {
+        metric: { type: "string", description: "the resolved metric name, e.g. net_revenue" },
+        dimensions: {
+          type: "array",
+          items: { type: "string" },
+          description: "at most one dimension to break down by, e.g. [\"city\"]",
+        },
+        filters: {
+          type: "array",
+          description:
+            "optional equality filters. Use field \"product_name\" with the product's name as the user said it " +
+            "to filter to one product - the system resolves it to a sku, or comes back with a clarification if " +
+            "it can't. Never pass field \"sku\" with a value you made up yourself.",
+          items: {
+            type: "object",
+            properties: {
+              field: { type: "string", description: "a dimension name (city, sku) or product_name" },
+              value: { type: "string" },
+            },
+            required: ["field", "value"],
+          },
+        },
+        time_range: {
+          type: "object",
+          properties: {
+            start: { type: "string", description: "YYYY-MM-DD" },
+            end: { type: "string", description: "YYYY-MM-DD" },
+          },
+          required: ["start", "end"],
+        },
+        grain: { type: "string", enum: ["day", "week", "month"], description: "set only for a time trend" },
+      },
+      required: ["metric", "time_range"],
+    },
+  },
+  {
+    type: "function",
+    name: "explain_change",
+    description:
+      "Explain why a metric changed between two periods. For a ratio metric (like return_rate or aov) it reports which side, numerator or denominator, drove it; for an additive metric it reports the top contributing dimension values. Call this once per why-question.",
+    parameters: {
+      type: "object",
+      properties: {
+        metric: { type: "string", description: "the resolved metric name" },
+        current_start: { type: "string", description: "YYYY-MM-DD" },
+        current_end: { type: "string", description: "YYYY-MM-DD" },
+        compare_start: { type: "string", description: "YYYY-MM-DD" },
+        compare_end: { type: "string", description: "YYYY-MM-DD" },
+        dimension: { type: "string", description: "dimension to break the change down by, for additive metrics" },
+        filters: {
+          type: "array",
+          description:
+            "optional equality filters. Use field \"product_name\" with the product's name as the user said " +
+            "it to narrow to one product - the system resolves it to a sku. Never pass field \"sku\" with a " +
+            "value you made up yourself.",
+          items: {
+            type: "object",
+            properties: {
+              field: { type: "string", description: "a dimension name (city, sku) or product_name" },
+              value: { type: "string" },
+            },
+            required: ["field", "value"],
+          },
+        },
+      },
+      required: ["metric", "current_start", "current_end", "compare_start", "compare_end"],
+    },
+  },
+  {
+    type: "function",
     name: "run_sql",
     description:
-      "Run a single read-only SELECT or WITH query against the store database and get back rows. No writes, no multiple statements.",
+      "Validated read-only SQL fallback. Only use this when query_metric genuinely cannot express the question. A single SELECT or WITH statement only.",
     parameters: {
       type: "object",
       properties: { sql: { type: "string", description: "a single SELECT or WITH statement" } },
       required: ["sql"],
+    },
+  },
+  {
+    type: "function",
+    name: "suggest_followups",
+    description:
+      "Publish a short list of follow-up questions the user could ask next, for display on screen. Call this occasionally after answering, not every turn.",
+    parameters: {
+      type: "object",
+      properties: {
+        questions: {
+          type: "array",
+          items: { type: "string" },
+          description: "up to 4 short follow-up questions",
+        },
+      },
+      required: ["questions"],
     },
   },
 ];
@@ -79,6 +156,8 @@ let micStream = null;
 let workletNode = null;
 let sessionReady = false;
 let intentionalStop = false;
+let sessionId = null;
+let lastUserQuestion = null;
 
 let nextPlayTime = 0;
 let scheduledSources = [];
@@ -89,6 +168,11 @@ let currentSql = "";
 let currentMetric = null;
 let lastQueryResult = null;
 let chartInstance = null;
+
+// Empty-reply guard: nudge once if a reply turn ends with no audio and no tool call.
+let turnHadAudio = false;
+let turnHadToolCall = false;
+let nudgedThisTurn = false;
 
 startBtn.addEventListener("click", start);
 stopBtn.addEventListener("click", stop);
@@ -131,6 +215,9 @@ function updatePartial(role, text) {
 }
 
 function finalizeTranscript(role, text) {
+  if (role === "user") {
+    lastUserQuestion = text;
+  }
   const label = (role === "user" ? "You: " : "Agent: ") + text;
   if (partialUserEl && role === "user") {
     partialUserEl.textContent = label;
@@ -141,15 +228,15 @@ function finalizeTranscript(role, text) {
   }
 }
 
-function updateMetricCard(metric) {
-  currentMetric = metric;
-  if (!metric || !metric.found) {
+function updateMetricCard(definition) {
+  currentMetric = definition;
+  if (!definition) {
     metricCardEl.classList.add("hidden");
     return;
   }
   metricCardEl.classList.remove("hidden");
-  metricNameEl.textContent = metric.name;
-  metricDefinitionEl.textContent = metric.definition;
+  metricNameEl.textContent = `${definition.name} (v${definition.version})`;
+  metricDefinitionEl.textContent = definition.description;
 }
 
 function updateSqlPanel(sql, errorMessage) {
@@ -327,33 +414,37 @@ function stopPlayback() {
 }
 
 async function handleToolCall(name, callId, args) {
+  const body = { ...args, _session_id: sessionId, _question: lastUserQuestion };
+
   try {
-    const resp = await fetch(`/api/tool/${name}`, {
+    const resp = await fetch(`/api/agent/${name}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(args),
+      body: JSON.stringify(body),
     });
-    const result = await resp.json();
+    const data = await resp.json();
+    const result = data.result;
+    const card = data.card;
 
-    if (name === "get_metric") {
-      updateMetricCard(result);
-    }
+    console.log("[SayQL card]", name, card);
 
-    if (name === "run_sql") {
-      if (result && result.error) {
-        updateSqlPanel(args.sql || "", result.error);
+    updateMetricCard(card ? card.definition : null);
+
+    if (name === "query_metric" || name === "run_sql") {
+      if (card && card.kind === "error") {
+        updateSqlPanel((card && card.sql) || args.sql || "", card.message || "query failed");
         renderTable(null);
         renderChart(null);
-      } else {
+      } else if (result && Array.isArray(result.rows)) {
         lastQueryResult = result;
-        updateSqlPanel(args.sql || "", null);
+        updateSqlPanel(card.sql || "", null);
         renderTable(result);
         renderChart(result);
       }
     }
 
     let compact = result;
-    if (name === "run_sql" && result && Array.isArray(result.rows)) {
+    if ((name === "query_metric" || name === "run_sql") && result && Array.isArray(result.rows)) {
       compact = {
         columns: result.columns,
         row_count: result.row_count,
@@ -364,7 +455,8 @@ async function handleToolCall(name, callId, args) {
 
     pendingToolResults.push({ call_id: callId, result: JSON.stringify(compact) });
   } catch (err) {
-    if (name === "run_sql") {
+    console.error("[SayQL card]", name, "tool call failed", err);
+    if (name === "query_metric" || name === "run_sql") {
       updateSqlPanel(args.sql || "", String(err));
     }
     pendingToolResults.push({
@@ -416,9 +508,13 @@ function handleMessage(msg) {
 
     case "reply.started":
       setStatus("speaking");
+      turnHadAudio = false;
+      turnHadToolCall = false;
+      nudgedThisTurn = false;
       break;
 
     case "reply.audio":
+      turnHadAudio = true;
       playReplyAudioChunk(msg.data);
       break;
 
@@ -429,6 +525,12 @@ function handleMessage(msg) {
     case "reply.done":
       if (msg.status === "interrupted") {
         stopPlayback();
+      } else if (!turnHadAudio && !turnHadToolCall && !nudgedThisTurn) {
+        // Empty reply guard: nudge once so the agent tries again this turn.
+        nudgedThisTurn = true;
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: "reply.create" }));
+        }
       }
       flushToolResults();
       setStatus(sessionReady ? "listening" : "idle");
@@ -444,7 +546,8 @@ function handleMessage(msg) {
         }
       }
       args = args || {};
-      if (msg.name === "run_sql") {
+      turnHadToolCall = true;
+      if (msg.name === "run_sql" || msg.name === "query_metric" || msg.name === "explain_change") {
         setStatus("running query");
       }
       handleToolCall(msg.name, msg.call_id, args);
@@ -493,6 +596,8 @@ async function start() {
     micSource.connect(workletNode);
 
     intentionalStop = false;
+    sessionId = (crypto.randomUUID && crypto.randomUUID()) || `sess-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    lastUserQuestion = null;
     ws = new WebSocket(`wss://agents.assemblyai.com/v1/ws?token=${token}`);
 
     ws.onopen = () => {

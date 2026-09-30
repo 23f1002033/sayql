@@ -16,6 +16,7 @@ metrics:
       Gross revenue from order items, minus the refunded amount for any
       returned units, for orders placed in the period.
     formula: "sum(quantity * unit_price) - sum(returned_quantity * unit_price)"
+    unit: currency
     aliases: ["net revenue", "net sales"]
     default_grain: month
     sql:
@@ -38,7 +39,8 @@ metrics:
       Revenue from order items before subtracting returns, for orders
       placed in the period.
     formula: "sum(quantity * unit_price)"
-    aliases: ["gross revenue", "gross sales", "total sales"]
+    unit: currency
+    aliases: ["gross revenue", "gross sales", "total sales", "sales"]
     default_grain: month
     sql:
       base_table: >
@@ -59,7 +61,8 @@ metrics:
       Value of units returned, based on the returns recorded in the
       period (by return date, not order date).
     formula: "sum(returned_quantity * unit_price)"
-    aliases: ["refund amount", "refunds", "amount refunded"]
+    unit: currency
+    aliases: ["refund amount", "refunds", "amount refunded", "returns"]
     default_grain: month
     sql:
       base_table: >
@@ -74,6 +77,29 @@ metrics:
         city: "o.city"
         sku: "p.sku"
 
+  units_returned:
+    version: 1
+    owner: operations
+    description: >
+      Total quantity of items returned, matched by the date of the
+      original order (not the return date), for the period.
+    formula: "sum(returned_quantity)"
+    unit: count
+    aliases: ["units returned", "returned units", "how many returns", "number of returns", "return count"]
+    default_grain: month
+    sql:
+      base_table: >
+        order_items oi
+        JOIN orders o ON o.order_id = oi.order_id
+        JOIN products p ON p.product_id = oi.product_id
+        LEFT JOIN returns r ON r.order_item_id = oi.order_item_id
+      value_expr: "COALESCE(SUM(r.quantity), 0)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+        sku: "p.sku"
+
   return_rate:
     version: 1
     owner: operations
@@ -81,8 +107,12 @@ metrics:
       Units returned divided by units sold, for orders placed in the
       period. Returned units are matched by order date, not return date.
     formula: "sum(returned_quantity) / sum(quantity)"
+    unit: percent
     aliases: ["return rate", "returns rate"]
     default_grain: month
+    why_components:
+      numerator: units_returned
+      denominator: units_sold
     sql:
       base_table: >
         order_items oi
@@ -103,8 +133,12 @@ metrics:
       Gross revenue divided by the number of distinct orders placed in
       the period.
     formula: "sum(quantity * unit_price) / count(distinct order_id)"
+    unit: currency
     aliases: ["aov", "average order value"]
     default_grain: month
+    why_components:
+      numerator: gross_revenue
+      denominator: orders_count
     sql:
       base_table: >
         order_items oi
@@ -121,7 +155,8 @@ metrics:
     description: >
       Distinct customers who placed at least one order in the period.
     formula: "count(distinct customer_id)"
-    aliases: ["active customers", "active customer count"]
+    unit: count
+    aliases: ["active customers", "active customer count", "customers"]
     default_grain: month
     sql:
       base_table: "orders o"
@@ -137,6 +172,7 @@ metrics:
     description: >
       Count of orders placed in the period.
     formula: "count(order_id)"
+    unit: count
     aliases: ["orders", "number of orders", "order count"]
     default_grain: month
     sql:
@@ -153,6 +189,7 @@ metrics:
     description: >
       Total quantity of items sold in the period, before returns.
     formula: "sum(quantity)"
+    unit: count
     aliases: ["units sold", "units", "quantity sold"]
     default_grain: month
     sql:
@@ -169,4 +206,3 @@ metrics:
 
 ambiguous_terms:
   revenue: [gross_revenue, net_revenue]
-  sales: [gross_revenue, net_revenue]
