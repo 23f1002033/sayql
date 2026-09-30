@@ -1,3 +1,6 @@
+import { AnswerCard } from "@/components/AnswerCard";
+import type { FeedItem } from "@/lib/types";
+
 const EXAMPLES = [
   { kind: "KPI", text: "What was net revenue last month?" },
   { kind: "Breakdown", text: "What were returns last week by city?" },
@@ -5,11 +8,20 @@ const EXAMPLES = [
   { kind: "Why", text: "Why did returns go up for the Wireless Earbuds Pro this month?" },
 ];
 
-export function EmptyState() {
+export function EmptyState({ samples }: { samples: FeedItem[] }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center text-center px-6 py-10">
+    <div className="flex flex-1 flex-col items-center text-center px-6 py-10">
       <h2 className="text-lg font-semibold mb-1">Ask SayQL about your store</h2>
       <p className="text-sm text-muted mb-6">Press the mic and try one of these out loud:</p>
+
+      {samples.length > 0 && (
+        <div className="w-full max-w-xl space-y-4 mb-8 text-left">
+          {samples.map((s) => (
+            <AnswerCard key={s.id} item={s} />
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl w-full">
         {EXAMPLES.map((ex) => (
           <div key={ex.kind} className="rounded-lg border border-border bg-surface p-3 text-left">

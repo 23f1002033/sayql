@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SayQL - hackathon deck</title>
+<meta name="description" content="SayQL: a voice analyst that shows its definition. 12 slide deck for the AssemblyAI Voice Agent Hackathon.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #f7f8fa;
+    --surface: #ffffff;
+    --border: #e3e6eb;
+    --foreground: #16181d;
+    --muted: #6b7280;
+    --accent: #2563eb;
+    --accent-soft: #eaf0fe;
+    --danger: #b3261e;
+    --danger-soft: #fdecea;
+    --amber: #92400e;
+    --amber-soft: #fffbeb;
+    --stage-w: 1920px;
+    --stage-h: 1080px;
+  }
+
+  @property --num {
+    syntax: '<integer>';
+    inherits: false;
+    initial-value: 0;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #dfe3e9;
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", sans-serif;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body.print-preview, body.print-preview html {
+    overflow: auto;
+    background: #dfe3e9;
+  }
+
+  a { color: var(--accent); }
+
+  .stage-wrap {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stage {
+    position: relative;
+    width: var(--stage-w);
+    height: var(--stage-h);
+    background: var(--background);
+    transform-origin: center center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    flex: none;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: none;
+    padding: 80px 110px 70px;
+    flex-direction: column;
+  }
+
+  .slide.active { display: flex; }
+
+  .slide .kicker {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 0 0 14px;
+  }
+
+  .slide h1 {
+    font-size: 56px;
+    line-height: 1.12;
+    font-weight: 800;
+    margin: 0 0 22px;
+    max-width: 1550px;
+  }
+
+  .slide .body-text {
+    font-size: 26px;
+    line-height: 1.5;
+    color: var(--muted);
+    max-width: 1200px;
+    margin: 0 0 28px;
+  }
+
+  .slide .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  .step {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .step.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .step { transition: none; }
+    .bar-fill { transition: none !important; }
+    .count { transition: none !important; }
+  }
+
+  /* ---- title slide ---- */
+  #slide-1 { justify-content: center; align-items: flex-start; }
+  #slide-1 .title-row { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 60px; }
+  #slide-1 .title-left { max-width: 900px; }
+  #slide-1 h1 { font-size: 96px; margin-bottom: 10px; }
+  #slide-1 .tagline { font-size: 30px; color: var(--foreground); margin: 0 0 26px; }
+  #slide-1 .for-line { font-size: 22px; color: var(--muted); margin: 0 0 40px; }
+  #slide-1 .links { font-size: 22px; display: flex; flex-direction: column; gap: 10px; }
+  #slide-1 .links span { color: var(--muted); margin-right: 10px; }
+  #slide-1 .byline { position: absolute; bottom: 44px; left: 110px; font-size: 18px; color: var(--muted); }
+  #slide-1 .title-shot { width: 620px; border-radius: 14px; border: 1px solid var(--border); box-shadow: 0 18px 40px rgba(20,30,60,0.18); }
+
+  /* ---- generic two-col ---- */
+  .cols { display: flex; gap: 56px; align-items: flex-start; }
+  .col { flex: 1; min-width: 0; }
+
+  .callout-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 30px;
+    font-size: 24px;
+    line-height: 1.5;
+  }
+
+  .callout-box.numbers { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
+
+  .example-diff {
+    display: flex;
+    gap: 40px;
+    margin-top: 8px;
+  }
+  .example-diff .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 30px;
+    flex: 1;
+  }
+  .example-diff .stat .label { font-size: 20px; color: var(--muted); margin-bottom: 6px; }
+  .example-diff .stat .value { font-size: 42px; font-weight: 800; }
+  .example-diff .stat.gap { background: var(--accent-soft); }
+
+  /* ---- flow steps (slide 3) ---- */
+  .flow { display: flex; align-items: center; gap: 0; margin-top: 10px; }
+  .flow .node {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 26px 30px;
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+    flex: 1;
+  }
+  .flow .node.code { border-color: var(--accent); color: var(--accent); }
+  .flow .arrow-sep { font-size: 34px; color: var(--muted); padding: 0 18px; }
+
+  /* ---- card slides (4-7) ---- */
+  .card-slide .content { flex-direction: row; gap: 60px; align-items: center; justify-content: center; }
+  .card-slide .shot-wrap { position: relative; flex: 0 0 auto; }
+  .card-slide img.shot { display: block; max-width: 900px; max-height: 660px; width: auto; height: auto; border-radius: 12px; box-shadow: 0 16px 40px rgba(20,30,60,0.15); }
+  .card-slide .side-caption { flex: 0 0 460px; font-size: 24px; color: var(--foreground); line-height: 1.5; }
+  .card-slide .side-caption .lead { font-weight: 700; color: var(--accent); display:block; margin-bottom: 10px; font-size: 20px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .footnote {
+    margin-top: 22px;
+    font-size: 18px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+
+  /* ---- dual image row (slide 6) ---- */
+  .dual-shots { display: flex; gap: 40px; width: 100%; }
+  .dual-shots figure { flex: 1; margin: 0; }
+  .dual-shots img { width: 100%; display: block; border-radius: 12px; box-shadow: 0 16px 40px rgba(20,30,60,0.15); }
+  .dual-shots figcaption { margin-top: 12px; font-size: 19px; color: var(--muted); text-align: center; }
+
+  /* ---- why slide (7) ---- */
+  #slide-7 .content { flex-direction: column; gap: 14px; justify-content: center; }
+  #slide-7 .why-row { display: flex; gap: 40px; align-items: center; }
+  #slide-7 .why-row img { display: block; max-height: 300px; width: auto; max-width: 46%; border-radius: 12px; box-shadow: 0 16px 40px rgba(20,30,60,0.15); flex: 0 0 auto; }
+  #slide-7 .why-row .cap { flex: 1; font-size: 20px; line-height: 1.4; }
+  #slide-7 .why-row .cap .lead { font-weight: 700; color: var(--accent); display:block; margin-bottom: 8px; font-size: 17px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .mini-bars { margin-top: 14px; }
+  .mini-bar-row { display: flex; align-items: center; gap: 10px; font-size: 16px; margin-bottom: 6px; }
+  .mini-bar-row .name { width: 84px; flex: none; color: var(--muted); }
+  .mini-bar-track { flex: 1; height: 14px; background: #eef1f5; border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width 1.1s ease; }
+  .step.revealed .bar-fill { width: var(--target); }
+  .mini-bar-row .pct { width: 54px; text-align: right; color: var(--foreground); font-weight: 600; font-size: 16px; }
+
+  /* ---- svg diagram slides (8, 9) ---- */
+  .diagram-wrap { display: flex; flex-direction: column; gap: 18px; }
+  .diagram-wrap svg { width: 100%; height: auto; display: block; }
+  .diagram-bullets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 21px; }
+  .diagram-bullets li { padding-left: 30px; position: relative; }
+  .diagram-bullets li::before { content: ""; position: absolute; left: 0; top: 11px; width: 8px; height: 8px; border-radius: 999px; background: var(--accent); }
+
+  .node-box { fill: var(--surface); stroke: var(--border); stroke-width: 2; rx: 12; }
+  .node-box.model { fill: #fff7ed; stroke: #fb923c; }
+  .node-box.code { fill: #eef2ff; stroke: #6366f1; }
+  .node-label { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 600; fill: var(--foreground); }
+  .node-tag { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; }
+  .node-tag.model { fill: #c2410c; }
+  .node-tag.code { fill: #4338ca; }
+  .edge-line { stroke: #9aa3af; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+  .edge-label { font-family: 'Inter', sans-serif; font-size: 15px; fill: var(--muted); }
+
+  /* ---- trust slide (10) ---- */
+  #slide-10 .bug-block { display: flex; gap: 30px; }
+  #slide-10 .bug-block .box { flex: 1; border-radius: 14px; padding: 24px 28px; font-size: 21px; line-height: 1.5; }
+  #slide-10 .bug-block .bad { background: var(--danger-soft); color: var(--danger); }
+  #slide-10 .bug-block .good { background: var(--accent-soft); color: #1d4ed8; }
+  #slide-10 .bug-block .box b { display: block; font-size: 15px; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+
+  .stat-row { display: flex; gap: 30px; margin-top: 10px; }
+  .stat-card { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; text-align: center; }
+  .stat-card .count { font-size: 48px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; counter-reset: statnum var(--num); }
+  .stat-card .count::after { content: counter(statnum); }
+  .stat-card .stat-label { font-size: 17px; color: var(--muted); margin-top: 6px; }
+
+  .placeholder-note {
+    margin-top: 14px;
+    font-size: 17px;
+    color: var(--amber);
+    background: var(--amber-soft);
+    border: 1px dashed #f59e0b;
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: inline-block;
+  }
+
+  /* ---- roadmap slide (11) ---- */
+  .roadmap-cols { display: flex; gap: 50px; }
+  .roadmap-col { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 32px; }
+  .roadmap-col h3 { margin: 0 0 16px; font-size: 22px; }
+  .roadmap-col.today h3 { color: var(--accent); }
+  .roadmap-col.next h3 { color: var(--muted); }
+  .roadmap-col ul { margin: 0; padding-left: 22px; font-size: 20px; line-height: 1.7; }
+  .roadmap-col.next ul { color: var(--muted); }
+  .pill { display: inline-block; font-size: 13px; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-left: 8px; vertical-align: middle; }
+  .pill.live { background: var(--accent-soft); color: var(--accent); }
+  .pill.roadmap { background: #f1f2f4; color: var(--muted); }
+
+  /* ---- try it slide (12) ---- */
+  #slide-12 .content { flex-direction: row; gap: 70px; align-items: center; }
+  #slide-12 .qr-col { flex: none; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  #slide-12 .qr-col svg { width: 240px; height: 240px; background: #fff; padding: 14px; border-radius: 12px; border: 1px solid var(--border); }
+  #slide-12 .qr-col .url { font-size: 18px; color: var(--muted); }
+  #slide-12 .sentences { flex: 1; }
+  #slide-12 .sentences ol { padding-left: 26px; font-size: 23px; line-height: 1.8; margin: 0 0 20px; }
+  #slide-12 .phone-shot { flex: none; width: 210px; border-radius: 20px; border: 6px solid #16181d; box-shadow: 0 16px 40px rgba(20,30,60,0.25); }
+  #slide-12 .limits-note { font-size: 17px; color: var(--muted); }
+
+  /* ---- chrome: progress bar, counter, hints ---- */
+  .progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); z-index: 50; transition: width 0.3s ease; }
+  .slide-counter {
+    position: fixed; bottom: 14px; right: 20px; z-index: 50;
+    font-family: 'Inter', sans-serif; font-size: 14px; color: #4b5563;
+    background: rgba(255,255,255,0.85); padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .nav-hint {
+    position: fixed; bottom: 14px; left: 20px; z-index: 50;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: #6b7280;
+    background: rgba(255,255,255,0.85); padding: 4px 10px; border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+
+  .notes-panel {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+    background: #111318; color: #e5e7eb;
+    font-family: 'Inter', sans-serif; font-size: 18px; line-height: 1.5;
+    padding: 22px 40px; max-height: 34vh; overflow-y: auto;
+    transform: translateY(100%); transition: transform 0.25s ease;
+    border-top: 3px solid var(--accent);
+  }
+  .notes-panel.open { transform: translateY(0); }
+  .notes-panel .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #9ca3af; margin-bottom: 8px; }
+
+  /* ---- print preview (on-screen, via P key) and real @media print ---- */
+  /* Both modes work the same way: stop hiding non-active slides, stack them
+     in normal document flow, and force every reveal step visible - directly
+     on the live .stage, no separate cloned copy to keep in sync. */
+  body.print-preview .stage-wrap {
+    position: static; display: block; height: auto; overflow: visible auto;
+    padding: 40px 0; background: #dfe3e9;
+  }
+  body.print-preview .stage {
+    position: relative; transform: none !important; height: auto; overflow: visible;
+    margin: 0 auto 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  }
+  body.print-preview .slide { display: flex !important; position: relative; height: var(--stage-h); page-break-after: always; }
+  body.print-preview .step { opacity: 1 !important; transform: none !important; }
+  body.print-preview .bar-fill { width: var(--target) !important; }
+  body.print-preview .progress-bar,
+  body.print-preview .slide-counter,
+  body.print-preview .nav-hint,
+  body.print-preview .notes-panel { display: none !important; }
+
+  @media print {
+    html, body { overflow: visible; background: #fff; height: auto; }
+    .progress-bar, .slide-counter, .nav-hint, .notes-panel { display: none !important; }
+    .stage-wrap { position: static; display: block; height: auto; }
+    .stage { position: relative; transform: none !important; height: auto; box-shadow: none; margin: 0; }
+    .slide {
+      display: flex !important; position: relative; height: var(--stage-h);
+      page-break-after: always; page-break-inside: avoid;
+    }
+    .step { opacity: 1 !important; transform: none !important; }
+    .bar-fill { width: var(--target) !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar" style="width: 0%"></div>
+<div class="slide-counter" id="slideCounter">1 / 12</div>
+<div class="nav-hint">arrows / space / swipe - S notes - F fullscreen - P print view</div>
+
+<div class="stage-wrap" id="stageWrap">
+  <div class="stage" id="stage">
+    <!-- ================= SLIDE 1: TITLE ================= -->
+    <section class="slide active" id="slide-1">
+      <div class="content" style="justify-content:center;">
+        <div class="title-row">
+          <div class="title-left">
+            <h1>SayQL</h1>
+            <p class="tagline">A voice analyst that shows its definition.</p>
+            <p class="for-line">Built for small D2C store owners who have data, but no analyst.</p>
+            <div class="links">
+              <div><span>Live:</span><a href="https://sayql.onrender.com/" target="_blank" rel="noopener">sayql.onrender.com</a></div>
+              <div><span>Repo:</span><a href="https://github.com/23f1002033/sayql" target="_blank" rel="noopener">github.com/23f1002033/sayql</a></div>
+            </div>
+          </div>
+          <img class="title-shot" src="img/app_full_1920x1080.png" alt="SayQL app showing sample answer cards">
+        </div>
+      </div>
+      <div class="byline">Ishank Gupta - AssemblyAI Voice Agent Hackathon</div>
+      <div class="notes" hidden>
+        SayQL is a voice analyst for a small D2C store owner - someone who has sales and returns data but no analyst to ask it questions. You ask out loud, it answers in speech, and the screen always shows which definition it used. It is live at sayql.onrender.com and the full source is on GitHub.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 2: PROBLEM ================= -->
+    <section class="slide" id="slide-2">
+      <p class="kicker">Problem</p>
+      <h1>The same question can mean two different numbers.</h1>
+      <div class="content">
+        <div class="step" data-step="1">
+          <p class="body-text">Dashboards and plain voice-to-SQL just answer. They do not know a business term has more than one valid definition - so they guess, silently.</p>
+        </div>
+        <div class="step" data-step="2">
+          <div class="example-diff">
+            <div class="stat"><div class="label">"Revenue", August 2026 - gross</div><div class="value">Rs 53.82 lakh</div></div>
+            <div class="stat"><div class="label">"Revenue", August 2026 - net</div><div class="value">Rs 50.81 lakh</div></div>
+            <div class="stat gap"><div class="label">Same word, same month</div><div class="value">Rs 3.01 lakh gap</div></div>
+          </div>
+        </div>
+        <div class="step" data-step="3">
+          <p class="body-text" style="margin-top:26px; color: var(--foreground); font-weight: 600;">Nobody can trust a number they cannot see the definition of.</p>
+        </div>
+      </div>
+      <div class="notes" hidden>
+        Owners ask "what was our revenue last month" all the time. The problem is that revenue can mean gross or net, and most tools just pick one and answer. In our own demo data, gross revenue for August is 53.82 lakh and net revenue is 50.81 lakh - a 3 lakh rupee gap for the exact same question. If the tool cannot tell you which one it used, you cannot trust the number.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 3: SOLUTION ================= -->
+    <section class="slide" id="slide-3">
+      <p class="kicker">Solution</p>
+      <h1>Ask in words. Answer in code you can check.</h1>
+      <div class="content">
+        <div class="step" data-step="1">
+          <p class="body-text">SayQL never lets the model guess a business term or compute a number itself. It resolves a definition, computes in deterministic code, and explains with evidence.</p>
+        </div>
+        <div class="step" data-step="2">
+          <div class="flow">
+            <div class="node">1. Ask<br><span style="font-weight:400; font-size:18px; color:var(--muted);">spoken question</span></div>
+            <div class="arrow-sep">-&gt;</div>
+            <div class="node code">2. Resolve definition<br><span style="font-weight:400; font-size:18px;">metrics.yaml</span></div>
+            <div class="arrow-sep">-&gt;</div>
+            <div class="node code">3. Compute in code<br><span style="font-weight:400; font-size:18px;">SQL, validated, read-only</span></div>
+            <div class="arrow-sep">-&gt;</div>
+            <div class="node code">4. Explain with evidence<br><span style="font-weight:400; font-size:18px;">definition + SQL shown</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="notes" hidden>
+        The flow is always the same: the owner asks a question out loud, SayQL resolves the business term against a versioned metric dictionary, computes the answer in deterministic Python and SQL - never in the model's head - and then explains the result with the definition, the SQL, and the evidence behind it, visible on screen.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 4: MOMENT 1 - KPI ================= -->
+    <section class="slide card-slide" id="slide-4">
+      <p class="kicker">Moment 1 - KPI</p>
+      <h1>Every number states its own definition.</h1>
+      <div class="content">
+        <div class="step shot-wrap" data-step="1">
+          <img class="shot" src="img/card_kpi_expanded.png" alt="KPI card for net revenue last month, with Definition, Evidence and SQL expanded">
+        </div>
+        <div class="side-caption step" data-step="2">
+          <span class="lead">"What was net revenue last month?"</span>
+          Net revenue for August 2026 was Rs 50.81 lakh, spoken as "50.8 lakh rupees" - using the net_revenue v1 definition. The exact SQL that produced it is one tap away.
+          <ul style="margin:16px 0 0; padding-left:20px; font-size:19px; color:var(--muted); line-height:1.6;">
+            <li>The definition is versioned - v1, not just a name</li>
+            <li>The SQL behind it is read-only, every time</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footnote">Cards rendered from real tool outputs; the live demo triggers them by voice.</div>
+      <div class="notes" hidden>
+        Ask "what was net revenue last month" and you get a spoken number plus a card that shows exactly which definition it used, the evidence behind it, and the read-only SQL that ran - open by tapping. Nothing here is summarized by the model; the card is the same JSON payload the tool returned.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 5: MOMENT 2 - AMBIGUITY ================= -->
+    <section class="slide card-slide" id="slide-5">
+      <p class="kicker">Moment 2 - Ambiguity</p>
+      <h1>It asks instead of guessing.</h1>
+      <div class="content">
+        <div class="step shot-wrap" data-step="1">
+          <img class="shot" src="img/card_clarification.png" alt="Clarification card asking whether revenue means gross or net revenue">
+        </div>
+        <div class="side-caption step" data-step="2">
+          <span class="lead">"What was our revenue last month?"</span>
+          "Revenue" is deliberately undefined. SayQL asks one short question back instead of picking a side. The options on screen are reminders of the wording, not buttons - there is no text-turn message in the Voice Agent API, so the answer has to be spoken.
+        </div>
+      </div>
+      <div class="footnote">Cards rendered from real tool outputs; the live demo triggers them by voice.</div>
+      <div class="notes" hidden>
+        This is the moment that shows SayQL's honesty. "Revenue" is not in the metric dictionary as a single term - it maps to two candidates, gross and net - so instead of guessing, it asks. Say "net revenue" out loud and it continues from there.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 6: MOMENT 3 - BREAKDOWN + TREND ================= -->
+    <section class="slide card-slide" id="slide-6">
+      <p class="kicker">Moment 3 - Breakdown and trend</p>
+      <h1>One dictionary, every shape of answer.</h1>
+      <div class="content" style="flex-direction: column;">
+        <div class="step" data-step="1" style="margin-bottom: 20px;">
+          <p class="body-text" style="margin-bottom:0;">The same metric definitions drive a bar chart, a trend line, or a plain number - no new SQL written for each shape.</p>
+        </div>
+        <div class="step dual-shots" data-step="2">
+          <figure>
+            <img src="img/card_breakdown.png" alt="Bar chart of refund amount by city for the last week, Mumbai highest">
+            <figcaption>"What were returns last week by city?"</figcaption>
+          </figure>
+          <figure>
+            <img src="img/card_trend.png" alt="Line chart of net revenue by month for the last year, showing a festive season bump">
+            <figcaption>"Show me net revenue by month for the last year."</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div class="footnote">Cards rendered from real tool outputs; the live demo triggers them by voice.</div>
+      <div class="notes" hidden>
+        Breakdown and trend are the same query_metric tool, just with a dimension or a grain added to the plan. The trend line also carries a planted story - the festive season bump from October and November - since the demo data is not just random noise.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 7: MOMENT 4 - WHY ================= -->
+    <section class="slide" id="slide-7">
+      <p class="kicker">Moment 4 - Why</p>
+      <h1>It explains, and says what it does not know.</h1>
+      <div class="content">
+        <div class="step why-row" data-step="1">
+          <img src="img/card_why-additive.png" alt="Why card showing refund amount increase, Mumbai as top contributor, with a volume context note">
+          <div class="cap">
+            <span class="lead">Additive: refund amount</span>
+            Refund amount for Wireless Earbuds Pro went from Rs 5.0 thousand to Rs 40.0 thousand.
+            <div class="mini-bars">
+              <div class="mini-bar-row"><span class="name">Mumbai</span><div class="mini-bar-track"><div class="bar-fill" style="--target: 64.3%;"></div></div><span class="pct">64.3%</span></div>
+              <div class="mini-bar-row"><span class="name">Hyderabad</span><div class="mini-bar-track"><div class="bar-fill" style="--target: 21.4%;"></div></div><span class="pct">21.4%</span></div>
+              <div class="mini-bar-row"><span class="name">Ahmedabad</span><div class="mini-bar-track"><div class="bar-fill" style="--target: 14.3%;"></div></div><span class="pct">14.3%</span></div>
+            </div>
+            It also refuses to overclaim: units sold rose 533% too, so part of the jump is volume, not only a higher return rate.
+          </div>
+        </div>
+        <div class="step why-row" data-step="2">
+          <img src="img/card_why-ratio.png" alt="Why card for return rate showing a low base warning">
+          <div class="cap">
+            <span class="lead">Ratio: return rate</span>
+            Return rate rose from 13.33% to 16.84% (up 3.5 percentage points). SayQL flags it: the earlier period had only 2 units returned, so the rate is noisy - a low_base warning, not a hidden number.
+          </div>
+        </div>
+      </div>
+      <div class="footnote">Cards rendered from real tool outputs; the live demo triggers them by voice.</div>
+      <div class="notes" hidden>
+        This is the differentiator: SayQL does not just find a top contributor, it checks whether the finding is trustworthy. Mumbai drove most of the returns increase, but volume also jumped, so that caveat is spoken too. For the ratio version, the base was too small to trust - 2 units - so it says so instead of stating a clean percentage like it means something.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 8: ASSEMBLYAI USAGE ================= -->
+    <section class="slide" id="slide-8">
+      <p class="kicker">How AssemblyAI is used</p>
+      <h1>One WebSocket does speech, language, and tool calls.</h1>
+      <div class="content">
+        <div class="diagram-wrap step" data-step="1">
+          <svg viewBox="0 0 1700 360" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#9aa3af"/>
+              </marker>
+            </defs>
+            <rect class="node-box code" x="20" y="140" width="300" height="90"/>
+            <text class="node-label" x="170" y="180" text-anchor="middle">FastAPI</text>
+            <text class="node-tag code" x="170" y="202" text-anchor="middle">this app, server-side</text>
+
+            <rect class="node-box" x="700" y="140" width="300" height="90"/>
+            <text class="node-label" x="850" y="180" text-anchor="middle">Browser</text>
+            <text class="node-tag" x="850" y="202" text-anchor="middle" fill="#6b7280">mic in, speaker out</text>
+
+            <rect class="node-box model" x="1380" y="140" width="300" height="90"/>
+            <text class="node-label" x="1530" y="180" text-anchor="middle">AssemblyAI</text>
+            <text class="node-tag model" x="1530" y="202" text-anchor="middle">Voice Agent, one WS</text>
+
+            <path class="edge-line" d="M320,165 C450,165 570,165 698,165"/>
+            <text class="edge-label" x="510" y="150" text-anchor="middle">1. GET token (60s, key stays server-side)</text>
+
+            <path class="edge-line" d="M1000,185 C1130,185 1250,185 1378,185"/>
+            <text class="edge-label" x="1189" y="220" text-anchor="middle">2. WS: session.update, input.audio</text>
+            <path class="edge-line" d="M1378,165 C1250,165 1130,165 1000,165"/>
+            <text class="edge-label" x="1189" y="150" text-anchor="middle">3. reply.audio, tool.call</text>
+
+            <path class="edge-line" d="M700,225 C570,260 450,260 322,225"/>
+            <text class="edge-label" x="510" y="290" text-anchor="middle">4. POST /api/agent/&#123;tool&#125; -&gt; 5. card + model_payload</text>
+          </svg>
+        </div>
+        <ul class="diagram-bullets step" data-step="2">
+          <li>Server mints a 60 second token per session - the AssemblyAI API key never reaches the browser.</li>
+          <li>Barge-in resets the playback schedule the instant the caller talks over a reply.</li>
+          <li>tool.result is only sent after reply.done, per the Voice Agent API's own tool-calling rule - not immediately on tool.call.</li>
+        </ul>
+      </div>
+      <div class="notes" hidden>
+        The entire voice loop, speech in, language understanding, tool calls, speech out, runs over one AssemblyAI Voice Agent WebSocket. FastAPI's only job in that loop is minting a short-lived token so the real API key never reaches the browser, and relaying tool calls to this backend's own endpoints. Barge-in and the reply.done rule for tool results both came from testing against the real protocol, not just reading the docs.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 9: ARCHITECTURE ================= -->
+    <section class="slide" id="slide-9">
+      <p class="kicker">Architecture</p>
+      <h1>Two boxes touch the model. The rest is code you can read.</h1>
+      <div class="content">
+        <div class="diagram-wrap step" data-step="1">
+          <svg viewBox="0 0 1700 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowhead2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6 Z" fill="#9aa3af"/>
+              </marker>
+            </defs>
+            <!-- row 1 -->
+            <rect class="node-box model" x="0" y="20" width="230" height="80"/>
+            <text class="node-label" x="115" y="55" text-anchor="middle">Voice / agent</text>
+            <text class="node-tag model" x="115" y="76" text-anchor="middle">MODEL</text>
+
+            <rect class="node-box code" x="290" y="20" width="230" height="80"/>
+            <text class="node-label" x="405" y="55" text-anchor="middle">Resolver</text>
+            <text class="node-tag code" x="405" y="76" text-anchor="middle">CODE</text>
+
+            <rect class="node-box code" x="580" y="20" width="230" height="80"/>
+            <text class="node-label" x="695" y="55" text-anchor="middle">Query plan</text>
+            <text class="node-tag code" x="695" y="76" text-anchor="middle">CODE</text>
+
+            <rect class="node-box code" x="870" y="20" width="230" height="80"/>
+            <text class="node-label" x="985" y="55" text-anchor="middle">Compiler</text>
+            <text class="node-tag code" x="985" y="76" text-anchor="middle">CODE</text>
+
+            <rect class="node-box code" x="1160" y="20" width="230" height="80"/>
+            <text class="node-label" x="1275" y="48" text-anchor="middle">Validator</text>
+            <text class="node-tag code" x="1275" y="68" text-anchor="middle">sqlglot - CODE</text>
+
+            <path class="edge-line" d="M230,60 L288,60" marker-end="url(#arrowhead2)"/>
+            <path class="edge-line" d="M520,60 L578,60" marker-end="url(#arrowhead2)"/>
+            <path class="edge-line" d="M810,60 L868,60" marker-end="url(#arrowhead2)"/>
+            <path class="edge-line" d="M1100,60 L1158,60" marker-end="url(#arrowhead2)"/>
+
+            <!-- snake down -->
+            <path class="edge-line" d="M1275,100 C1275,160 1275,170 1275,170 L1275,220 C1275,240 1260,240 1240,240 L1160,240" marker-end="url(#arrowhead2)"/>
+
+            <!-- row 2, right to left -->
+            <rect class="node-box code" x="870" y="200" width="230" height="80"/>
+            <text class="node-label" x="985" y="235" text-anchor="middle">Executor</text>
+            <text class="node-tag code" x="985" y="256" text-anchor="middle">read-only - CODE</text>
+
+            <rect class="node-box code" x="580" y="200" width="230" height="80"/>
+            <text class="node-label" x="695" y="235" text-anchor="middle">Analysis</text>
+            <text class="node-tag code" x="695" y="256" text-anchor="middle">CODE</text>
+
+            <rect class="node-box code" x="290" y="200" width="230" height="80"/>
+            <text class="node-label" x="405" y="235" text-anchor="middle">Card + model_payload</text>
+            <text class="node-tag code" x="405" y="256" text-anchor="middle">CODE</text>
+
+            <rect class="node-box model" x="0" y="200" width="230" height="80"/>
+            <text class="node-label" x="115" y="235" text-anchor="middle">UI + speech</text>
+            <text class="node-tag model" x="115" y="256" text-anchor="middle">CODE renders, MODEL speaks</text>
+
+            <path class="edge-line" d="M870,240 L812,240" marker-end="url(#arrowhead2)"/>
+            <path class="edge-line" d="M580,240 L522,240" marker-end="url(#arrowhead2)"/>
+            <path class="edge-line" d="M290,240 L232,240" marker-end="url(#arrowhead2)"/>
+          </svg>
+        </div>
+        <p class="body-text step" data-step="2" style="margin-top:6px;">Numbers are computed once, in Python, and formatted once, in app/format.py. The model only ever reads a pre-formatted spoken string back.</p>
+      </div>
+      <div class="notes" hidden>
+        Only two boxes in this pipeline are the model: understanding the spoken question, and speaking the final answer. Everything between - resolving the metric, building the query plan, compiling it to SQL, validating it with sqlglot, executing it read-only, and running the analysis - is deterministic Python you can read in this repo. That is what makes the numbers checkable.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 10: TRUST AND ACCURACY ================= -->
+    <section class="slide" id="slide-10">
+      <p class="kicker">Trust and accuracy</p>
+      <h1>The bug that taught us not to trust the model with numbers.</h1>
+      <div class="content">
+        <div class="step bug-block" data-step="1">
+          <div class="box bad"><b>Before</b>Gross revenue was Rs 53.82 lakh. The agent spoke "five lakh thirty eight thousand rupees" - about 10 times too small. The model was converting the raw number itself.</div>
+          <div class="box good"><b>Fix</b>Raw numbers were removed from everything the model sees. It now only reads pre-formatted spoken strings from model_payload, and is told never to compute or round a number itself.</div>
+        </div>
+        <div class="step" data-step="2" style="margin-top:26px;">
+          <div class="stat-row" id="statRow">
+            <div class="stat-card"><div class="count" id="statTests" style="--num:0;"></div><div class="stat-label">automated tests passing</div></div>
+            <div class="stat-card"><div class="count" id="statOrders" style="--num:0;"></div><div class="stat-label">orders in the seeded demo data</div></div>
+            <div class="stat-card"><div class="count" id="statReturns" style="--num:0;"></div><div class="stat-label">returns tracked in the demo data</div></div>
+          </div>
+          <div id="evalPlaceholder" class="placeholder-note">Accuracy eval: not yet run. evals/results.md does not exist yet - scripts/build_slide_numbers.py will pick it up once it does.</div>
+        </div>
+      </div>
+      <div class="notes" hidden>
+        This bug is the reason model_payload exists. Early on, the agent spoke a gross revenue number that was off by about 10 times, because it was converting the raw figure itself instead of reading a pre-formatted string. The fix was structural: the model never sees a raw number again. These test and data counts come straight from this repo, not from a slide I typed by hand - and the accuracy eval is honestly marked as not run yet.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 11: BUSINESS VALUE / ROADMAP ================= -->
+    <section class="slide" id="slide-11">
+      <p class="kicker">Business value and what is next</p>
+      <h1>Ask works today. Analyze, Explain, Detect, Alert, Act are the roadmap.</h1>
+      <div class="content">
+        <div class="step roadmap-cols" data-step="1">
+          <div class="roadmap-col today">
+            <h3>Today <span class="pill live">LIVE</span></h3>
+            <ul>
+              <li>Ask: KPI, breakdown, trend, and why-with-evidence answers, spoken and on screen</li>
+              <li>A versioned metric dictionary, not freehand SQL</li>
+              <li>CSV ingestion into the same schema</li>
+              <li>Single-round explain_change: one dimension, one comparison</li>
+            </ul>
+          </div>
+          <div class="roadmap-col next">
+            <h3>Roadmap <span class="pill roadmap">NOT BUILT</span></h3>
+            <ul>
+              <li>Analyze: compare several dimensions at once, chain follow-up questions</li>
+              <li>Explain: propose the next question instead of waiting for it</li>
+              <li>Detect: a scheduled job that flags a change worth asking about</li>
+              <li>Alert and Act: notify outside the app, then trigger a real action</li>
+              <li>Shopify / WooCommerce connectors, auth and per-tenant isolation</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="notes" hidden>
+        Today, SayQL answers Ask-stage questions end to end, with CSV ingestion already working and a basic why-card. Analyze, Explain, Detect, Alert and Act are the intended roadmap in docs/roadmap.md, in that order - none of them are built yet, and I want to be upfront about that rather than implying otherwise.
+      </div>
+    </section>
+
+    <!-- ================= SLIDE 12: TRY IT ================= -->
+    <section class="slide" id="slide-12">
+      <p class="kicker">Try it</p>
+      <h1>Say four sentences. See the definition behind every one.</h1>
+      <div class="content">
+        <div class="step qr-col" data-step="1">
+          <svg viewBox="0 0 31 31" xmlns="http://www.w3.org/2000/svg">
+            <rect width="31" height="31" fill="#ffffff"/>
+            <g fill="#16181d"><rect x="1" y="1" width="7" height="1"/><rect x="9" y="1" width="3" height="1"/><rect x="14" y="1" width="3" height="1"/><rect x="19" y="1" width="1" height="1"/><rect x="21" y="1" width="1" height="1"/><rect x="23" y="1" width="7" height="1"/><rect x="1" y="2" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/><rect x="11" y="2" width="1" height="1"/><rect x="13" y="2" width="1" height="1"/><rect x="16" y="2" width="1" height="1"/><rect x="18" y="2" width="2" height="1"/><rect x="23" y="2" width="1" height="1"/><rect x="29" y="2" width="1" height="1"/><rect x="1" y="3" width="1" height="1"/><rect x="3" y="3" width="3" height="1"/><rect x="7" y="3" width="1" height="1"/><rect x="9" y="3" width="1" height="1"/><rect x="11" y="3" width="1" height="1"/><rect x="14" y="3" width="1" height="1"/><rect x="18" y="3" width="2" height="1"/><rect x="21" y="3" width="1" height="1"/><rect x="23" y="3" width="1" height="1"/><rect x="25" y="3" width="3" height="1"/><rect x="29" y="3" width="1" height="1"/><rect x="1" y="4" width="1" height="1"/><rect x="3" y="4" width="3" height="1"/><rect x="7" y="4" width="1" height="1"/><rect x="10" y="4" width="1" height="1"/><rect x="12" y="4" width="1" height="1"/><rect x="16" y="4" width="4" height="1"/><rect x="21" y="4" width="1" height="1"/><rect x="23" y="4" width="1" height="1"/><rect x="25" y="4" width="3" height="1"/><rect x="29" y="4" width="1" height="1"/><rect x="1" y="5" width="1" height="1"/><rect x="3" y="5" width="3" height="1"/><rect x="7" y="5" width="1" height="1"/><rect x="10" y="5" width="3" height="1"/><rect x="16" y="5" width="4" height="1"/><rect x="23" y="5" width="1" height="1"/><rect x="25" y="5" width="3" height="1"/><rect x="29" y="5" width="1" height="1"/><rect x="1" y="6" width="1" height="1"/><rect x="7" y="6" width="1" height="1"/><rect x="9" y="6" width="3" height="1"/><rect x="13" y="6" width="3" height="1"/><rect x="17" y="6" width="2" height="1"/><rect x="21" y="6" width="1" height="1"/><rect x="23" y="6" width="1" height="1"/><rect x="29" y="6" width="1" height="1"/><rect x="1" y="7" width="7" height="1"/><rect x="9" y="7" width="1" height="1"/><rect x="11" y="7" width="1" height="1"/><rect x="13" y="7" width="1" height="1"/><rect x="15" y="7" width="1" height="1"/><rect x="17" y="7" width="1" height="1"/><rect x="19" y="7" width="1" height="1"/><rect x="21" y="7" width="1" height="1"/><rect x="23" y="7" width="7" height="1"/><rect x="11" y="8" width="4" height="1"/><rect x="19" y="8" width="1" height="1"/><rect x="21" y="8" width="1" height="1"/><rect x="1" y="9" width="1" height="1"/><rect x="3" y="9" width="1" height="1"/><rect x="7" y="9" width="2" height="1"/><rect x="11" y="9" width="1" height="1"/><rect x="13" y="9" width="2" height="1"/><rect x="16" y="9" width="2" height="1"/><rect x="20" y="9" width="2" height="1"/><rect x="24" y="9" width="1" height="1"/><rect x="27" y="9" width="1" height="1"/><rect x="29" y="9" width="1" height="1"/><rect x="2" y="10" width="1" height="1"/><rect x="8" y="10" width="4" height="1"/><rect x="13" y="10" width="1" height="1"/><rect x="17" y="10" width="2" height="1"/><rect x="20" y="10" width="2" height="1"/><rect x="23" y="10" width="2" height="1"/><rect x="28" y="10" width="2" height="1"/><rect x="1" y="11" width="2" height="1"/><rect x="5" y="11" width="1" height="1"/><rect x="7" y="11" width="3" height="1"/><rect x="11" y="11" width="2" height="1"/><rect x="14" y="11" width="2" height="1"/><rect x="17" y="11" width="1" height="1"/><rect x="20" y="11" width="2" height="1"/><rect x="25" y="11" width="3" height="1"/><rect x="29" y="11" width="1" height="1"/><rect x="1" y="12" width="1" height="1"/><rect x="4" y="12" width="2" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="11" y="12" width="1" height="1"/><rect x="15" y="12" width="3" height="1"/><rect x="19" y="12" width="1" height="1"/><rect x="21" y="12" width="1" height="1"/><rect x="26" y="12" width="1" height="1"/><rect x="2" y="13" width="8" height="1"/><rect x="11" y="13" width="1" height="1"/><rect x="14" y="13" width="2" height="1"/><rect x="20" y="13" width="4" height="1"/><rect x="29" y="13" width="1" height="1"/><rect x="2" y="14" width="2" height="1"/><rect x="8" y="14" width="4" height="1"/><rect x="14" y="14" width="2" height="1"/><rect x="18" y="14" width="1" height="1"/><rect x="20" y="14" width="2" height="1"/><rect x="23" y="14" width="2" height="1"/><rect x="28" y="14" width="2" height="1"/><rect x="3" y="15" width="1" height="1"/><rect x="6" y="15" width="3" height="1"/><rect x="11" y="15" width="1" height="1"/><rect x="16" y="15" width="1" height="1"/><rect x="18" y="15" width="1" height="1"/><rect x="20" y="15" width="2" height="1"/><rect x="25" y="15" width="1" height="1"/><rect x="29" y="15" width="1" height="1"/><rect x="3" y="16" width="1" height="1"/><rect x="5" y="16" width="2" height="1"/><rect x="9" y="16" width="2" height="1"/><rect x="12" y="16" width="3" height="1"/><rect x="19" y="16" width="3" height="1"/><rect x="23" y="16" width="1" height="1"/><rect x="25" y="16" width="1" height="1"/><rect x="2" y="17" width="1" height="1"/><rect x="5" y="17" width="4" height="1"/><rect x="12" y="17" width="3" height="1"/><rect x="16" y="17" width="2" height="1"/><rect x="19" y="17" width="1" height="1"/><rect x="21" y="17" width="1" height="1"/><rect x="23" y="17" width="1" height="1"/><rect x="29" y="17" width="1" height="1"/><rect x="2" y="18" width="1" height="1"/><rect x="4" y="18" width="2" height="1"/><rect x="10" y="18" width="2" height="1"/><rect x="17" y="18" width="2" height="1"/><rect x="20" y="18" width="2" height="1"/><rect x="23" y="18" width="2" height="1"/><rect x="27" y="18" width="3" height="1"/><rect x="1" y="19" width="4" height="1"/><rect x="7" y="19" width="1" height="1"/><rect x="10" y="19" width="2" height="1"/><rect x="13" y="19" width="3" height="1"/><rect x="17" y="19" width="1" height="1"/><rect x="20" y="19" width="1" height="1"/><rect x="25" y="19" width="2" height="1"/><rect x="29" y="19" width="1" height="1"/><rect x="5" y="20" width="1" height="1"/><rect x="8" y="20" width="2" height="1"/><rect x="11" y="20" width="2" height="1"/><rect x="15" y="20" width="3" height="1"/><rect x="19" y="20" width="1" height="1"/><rect x="21" y="20" width="3" height="1"/><rect x="1" y="21" width="2" height="1"/><rect x="4" y="21" width="2" height="1"/><rect x="7" y="21" width="1" height="1"/><rect x="9" y="21" width="1" height="1"/><rect x="11" y="21" width="1" height="1"/><rect x="13" y="21" width="3" height="1"/><rect x="18" y="21" width="9" height="1"/><rect x="28" y="21" width="1" height="1"/><rect x="9" y="22" width="1" height="1"/><rect x="11" y="22" width="2" height="1"/><rect x="14" y="22" width="2" height="1"/><rect x="18" y="22" width="1" height="1"/><rect x="21" y="22" width="1" height="1"/><rect x="25" y="22" width="3" height="1"/><rect x="29" y="22" width="1" height="1"/><rect x="1" y="23" width="7" height="1"/><rect x="9" y="23" width="2" height="1"/><rect x="12" y="23" width="2" height="1"/><rect x="16" y="23" width="1" height="1"/><rect x="21" y="23" width="1" height="1"/><rect x="23" y="23" width="1" height="1"/><rect x="25" y="23" width="1" height="1"/><rect x="29" y="23" width="1" height="1"/><rect x="1" y="24" width="1" height="1"/><rect x="7" y="24" width="1" height="1"/><rect x="10" y="24" width="5" height="1"/><rect x="18" y="24" width="1" height="1"/><rect x="20" y="24" width="2" height="1"/><rect x="25" y="24" width="1" height="1"/><rect x="28" y="24" width="2" height="1"/><rect x="1" y="25" width="1" height="1"/><rect x="3" y="25" width="3" height="1"/><rect x="7" y="25" width="1" height="1"/><rect x="11" y="25" width="1" height="1"/><rect x="13" y="25" width="2" height="1"/><rect x="16" y="25" width="3" height="1"/><rect x="20" y="25" width="7" height="1"/><rect x="28" y="25" width="1" height="1"/><rect x="1" y="26" width="1" height="1"/><rect x="3" y="26" width="3" height="1"/><rect x="7" y="26" width="1" height="1"/><rect x="10" y="26" width="2" height="1"/><rect x="13" y="26" width="1" height="1"/><rect x="17" y="26" width="1" height="1"/><rect x="21" y="26" width="2" height="1"/><rect x="25" y="26" width="4" height="1"/><rect x="1" y="27" width="1" height="1"/><rect x="3" y="27" width="3" height="1"/><rect x="7" y="27" width="1" height="1"/><rect x="9" y="27" width="3" height="1"/><rect x="13" y="27" width="2" height="1"/><rect x="17" y="27" width="6" height="1"/><rect x="25" y="27" width="1" height="1"/><rect x="28" y="27" width="2" height="1"/><rect x="1" y="28" width="1" height="1"/><rect x="7" y="28" width="1" height="1"/><rect x="11" y="28" width="1" height="1"/><rect x="13" y="28" width="1" height="1"/><rect x="16" y="28" width="2" height="1"/><rect x="19" y="28" width="8" height="1"/><rect x="1" y="29" width="7" height="1"/><rect x="9" y="29" width="1" height="1"/><rect x="11" y="29" width="2" height="1"/><rect x="15" y="29" width="1" height="1"/><rect x="18" y="29" width="2" height="1"/><rect x="21" y="29" width="2" height="1"/><rect x="24" y="29" width="2" height="1"/><rect x="29" y="29" width="1" height="1"/></g>
+          </svg>
+          <div class="url">sayql.onrender.com</div>
+          <img class="phone-shot" src="img/app_mobile_390x844.png" alt="SayQL on a phone screen">
+        </div>
+        <div class="sentences step" data-step="2">
+          <ol>
+            <li>"What was net revenue last month?"</li>
+            <li>"What were returns last week by city?"</li>
+            <li>"What was our revenue last month?"</li>
+            <li>"Why did returns go up for the Wireless Earbuds Pro this month?"</li>
+          </ol>
+          <p class="limits-note">Use headphones or a quiet room - open speakers can make the agent hear itself. Demo is rate-limited to 8 voice sessions per connection per 10 minutes, 300 total per day.</p>
+        </div>
+      </div>
+      <div class="notes" hidden>
+        Scan the code or go to sayql.onrender.com, allow the microphone, and say these four sentences one at a time. Headphones help since open speakers can confuse the agent by playing its own voice back to it. That is the whole pitch: ask like a person, get an answer you can check.
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="notes-panel" id="notesPanel">
+  <div class="notes-title">Speaker notes</div>
+  <div id="notesText"></div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var stage = document.getElementById("stage");
+  var stageWrap = document.getElementById("stageWrap");
+  var slides = Array.prototype.slice.call(document.querySelectorAll(".slide"));
+  var total = slides.length;
+  var current = 0;
+  var stepIndex = 0;
+  var notesOpen = false;
+  var printPreview = false;
+
+  function stepsFor(slide) {
+    return Array.prototype.slice.call(slide.querySelectorAll(".step"));
+  }
+
+  function renderSlide() {
+    slides.forEach(function (s, i) {
+      s.classList.toggle("active", i === current);
+    });
+    var steps = stepsFor(slides[current]);
+    steps.forEach(function (st, i) {
+      st.classList.toggle("revealed", i < stepIndex);
+    });
+    document.getElementById("progressBar").style.width = (total <= 1 ? 100 : (current / (total - 1)) * 100) + "%";
+    document.getElementById("slideCounter").textContent = (current + 1) + " / " + total;
+    if (notesOpen) updateNotes();
+  }
+
+  function next() {
+    var steps = stepsFor(slides[current]);
+    if (stepIndex < steps.length) {
+      stepIndex += 1;
+      renderSlide();
+    } else if (current < total - 1) {
+      current += 1;
+      stepIndex = stepsFor(slides[current]).length ? 0 : 0;
+      renderSlide();
+    }
+  }
+
+  function prev() {
+    if (stepIndex > 0) {
+      stepIndex -= 1;
+      renderSlide();
+    } else if (current > 0) {
+      current -= 1;
+      stepIndex = stepsFor(slides[current]).length;
+      renderSlide();
+    }
+  }
+
+  function updateNotes() {
+    var notesEl = slides[current].querySelector(".notes");
+    document.getElementById("notesText").textContent = notesEl ? notesEl.textContent.trim() : "(no notes for this slide)";
+  }
+
+  function toggleNotes() {
+    notesOpen = !notesOpen;
+    document.getElementById("notesPanel").classList.toggle("open", notesOpen);
+    if (notesOpen) updateNotes();
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(function () {});
+    } else {
+      document.exitFullscreen().catch(function () {});
+    }
+  }
+
+  function togglePrintPreview() {
+    printPreview = !printPreview;
+    document.body.classList.toggle("print-preview", printPreview);
+  }
+
+  function scaleStage() {
+    var scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = "scale(" + scale + ")";
+  }
+
+  window.addEventListener("resize", scaleStage);
+  scaleStage();
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight" || e.key === " " || e.key === "Spacebar") {
+      e.preventDefault();
+      next();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      prev();
+    } else if (e.key === "s" || e.key === "S") {
+      toggleNotes();
+    } else if (e.key === "f" || e.key === "F") {
+      toggleFullscreen();
+    } else if (e.key === "p" || e.key === "P") {
+      togglePrintPreview();
+    } else if (e.key === "Escape" && printPreview) {
+      togglePrintPreview();
+    }
+  });
+
+  stageWrap.addEventListener("click", function (e) {
+    if (e.target.closest("a")) return;
+    var rect = stageWrap.getBoundingClientRect();
+    var x = e.clientX - rect.left;
+    if (x > rect.width / 2) {
+      next();
+    } else {
+      prev();
+    }
+  });
+
+  var touchStartX = 0, touchStartY = 0;
+  stageWrap.addEventListener("touchstart", function (e) {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+  stageWrap.addEventListener("touchend", function (e) {
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 50 && Math.abs(dy) < 60) {
+      if (dx < 0) next(); else prev();
+    }
+  }, { passive: true });
+
+  renderSlide();
+
+  // ---- load repo-sourced numbers for slide 10 ----
+  fetch("data/slide_numbers.json")
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      var tests = document.getElementById("statTests");
+      var orders = document.getElementById("statOrders");
+      var returnsEl = document.getElementById("statReturns");
+      if (data.pytest_passed != null) tests.style.setProperty("--num", data.pytest_passed);
+      if (data.row_counts && data.row_counts.orders != null) orders.style.setProperty("--num", data.row_counts.orders);
+      if (data.row_counts && data.row_counts.returns != null) returnsEl.style.setProperty("--num", data.row_counts.returns);
+
+      var placeholder = document.getElementById("evalPlaceholder");
+      if (data.eval_results && data.eval_results.available) {
+        var parts = [];
+        Object.keys(data.eval_results).forEach(function (k) {
+          if (k === "available") return;
+          parts.push(k.replace(/_/g, " ") + ": " + data.eval_results[k]);
+        });
+        placeholder.textContent = "Accuracy eval (evals/results.md): " + parts.join(", ");
+        placeholder.classList.remove("placeholder-note");
+      }
+    })
+    .catch(function () {
+      // data/slide_numbers.json missing or unreachable (e.g. opened as a local
+      // file instead of served over http) - stat boxes just stay at 0.
+    });
+})();
+</script>
+</body>
+</html>

@@ -8,3 +8,4 @@ sqlalchemy
 sqlglot
 psycopg2-binary
 pytest
+playwright

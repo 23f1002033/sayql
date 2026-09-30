@@ -4,7 +4,15 @@ import { useState } from "react";
 
 import type { Card } from "@/lib/types";
 
-export function CardShell({ card, children }: { card: Card; children: React.ReactNode }) {
+export function CardShell({
+  card,
+  children,
+  isSample,
+}: {
+  card: Card;
+  children: React.ReactNode;
+  isSample?: boolean;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copySql() {
@@ -22,7 +30,12 @@ export function CardShell({ card, children }: { card: Card; children: React.Reac
   const hasFooter = card.definition || card.row_count != null || card.elapsed_ms != null;
 
   return (
-    <div className="rounded-xl border border-border bg-surface p-4 shadow-sm">
+    <div className="relative rounded-xl border border-border bg-surface p-4 shadow-sm">
+      {isSample && (
+        <span className="absolute top-3 right-3 text-[10px] uppercase tracking-wide text-muted border border-border rounded-full px-2 py-0.5">
+          Sample
+        </span>
+      )}
       {children}
 
       {hasDetails && (

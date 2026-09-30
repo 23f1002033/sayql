@@ -66,6 +66,7 @@ export interface FeedItem {
   toolName: string;
   card: Card;
   timestamp: number;
+  isSample?: boolean;
 }
 
 export interface MetricInfo {

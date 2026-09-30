@@ -212,6 +212,10 @@ async def get_history(limit: int = 20):
 # the "/" mount below, or that mount's prefix match would shadow it.
 app.mount("/classic", StaticFiles(directory="static", html=True), name="classic")
 
+# Hackathon slide deck, self-contained HTML. Registered before "/" for the
+# same reason as /classic above.
+app.mount("/slides", StaticFiles(directory="docs/slides", html=True), name="slides")
+
 # New Next.js UI (Phase 3+5), now the app served at "/".
 if os.path.isdir("frontend/out"):
     app.mount("/", StaticFiles(directory="frontend/out", html=True), name="frontend")

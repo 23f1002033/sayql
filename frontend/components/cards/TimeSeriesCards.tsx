@@ -14,7 +14,7 @@ export function BreakdownBody({ card }: { card: Card }) {
       {card.narration_seed && <p className="text-sm mb-3">{card.narration_seed}</p>}
       <div className="h-56 -ml-2">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
+          <BarChart data={data} margin={{ top: 16, right: 8, bottom: 8, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e3e6eb" />
             <XAxis dataKey="label" tick={{ fontSize: 12 }} />
             <YAxis tickFormatter={(v) => formatByUnit(v, unit)} tick={{ fontSize: 11 }} width={72} />
@@ -36,7 +36,7 @@ export function TrendBody({ card }: { card: Card }) {
       {card.narration_seed && <p className="text-sm mb-3">{card.narration_seed}</p>}
       <div className="h-56 -ml-2">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 8, right: 8, bottom: 8, left: 0 }}>
+          <LineChart data={data} margin={{ top: 16, right: 8, bottom: 8, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e3e6eb" />
             <XAxis dataKey="label" tick={{ fontSize: 12 }} />
             <YAxis tickFormatter={(v) => formatByUnit(v, unit)} tick={{ fontSize: 11 }} width={72} />

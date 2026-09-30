@@ -17,6 +17,7 @@ COPY main.py tools.py metrics.yaml ./
 COPY app/ ./app/
 COPY scripts/ ./scripts/
 COPY static/ ./static/
+COPY docs/ ./docs/
 COPY --from=frontend-build /build/frontend/out ./frontend/out
 
 # Deterministic demo data, baked into the image at build time.

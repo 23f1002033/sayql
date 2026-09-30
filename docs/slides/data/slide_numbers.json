@@ -1,0 +1,13 @@
+{
+  "pytest_passed": 100,
+  "row_counts": {
+    "customers": 1600,
+    "products": 30,
+    "orders": 20233,
+    "order_items": 30146,
+    "returns": 1501
+  },
+  "eval_results": {
+    "available": false
+  }
+}

@@ -7,6 +7,8 @@ import { AskBar } from "@/components/AskBar";
 import { EmptyState } from "@/components/EmptyState";
 import { Sidebar } from "@/components/Sidebar";
 import { useVoiceAgent } from "@/hooks/useVoiceAgent";
+import { fetchSampleCards } from "@/lib/api";
+import type { FeedItem } from "@/lib/types";
 
 type DebugApplyCard = (name: string, card: unknown) => void;
 
@@ -19,9 +21,17 @@ declare global {
 export default function Home() {
   const { status, feed, followups, error, isRunning, start, stop, applyCard, showError } = useVoiceAgent();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [samples, setSamples] = useState<FeedItem[]>([]);
 
   const activeMetric = useMemo(() => feed[0]?.card.definition?.name ?? null, [feed]);
   const refreshKey = feed.length;
+
+  // Sample cards render on first load so the screen never opens empty; they
+  // never touch /api/voice-token or the WebSocket, and they collapse as soon
+  // as a real question produces a real card.
+  useEffect(() => {
+    fetchSampleCards().then(setSamples);
+  }, []);
 
   // Screenshot/E2E harness only: lets Playwright drive real card states via
   // the same /api/agent/* endpoints without needing a live WS voice session.
@@ -65,7 +75,7 @@ export default function Home() {
 
         <main className="flex-1 overflow-y-auto px-4 py-4">
           {feed.length === 0 ? (
-            <EmptyState />
+            <EmptyState samples={samples} />
           ) : (
             <div className="max-w-2xl mx-auto space-y-4">
               {feed.map((item, idx) => (

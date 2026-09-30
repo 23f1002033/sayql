@@ -10,7 +10,7 @@ export function AnswerCard({ item }: { item: FeedItem }) {
   const { card } = item;
 
   return (
-    <CardShell card={card}>
+    <CardShell card={card} isSample={item.isSample}>
       {card.kind === "kpi" && <KpiBody card={card} />}
       {card.kind === "breakdown" && <BreakdownBody card={card} />}
       {card.kind === "trend" && <TrendBody card={card} />}

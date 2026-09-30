@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import type { VoiceStatus } from "@/lib/types";
 
 export function AskBar({
@@ -15,29 +13,11 @@ export function AskBar({
   onStart: () => void;
   onStop: () => void;
 }) {
-  const [text, setText] = useState("");
-  const [hint, setHint] = useState<string | null>(null);
-
-  // No text-turn message exists in the Voice Agent API (confirmed against
-  // the docs), so typing here can only remind you what to say, not send it.
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const trimmed = text.trim();
-    if (!trimmed) return;
-    setHint(`Voice only for now - please say this out loud: "${trimmed}"`);
-    setText("");
-  }
-
   const isActive = status === "listening" || status === "speaking";
 
   return (
     <div className="border-t border-border bg-surface px-4 py-3">
-      {hint && (
-        <p className="text-xs text-muted mb-2" role="status">
-          {hint}
-        </p>
-      )}
-      <form onSubmit={handleSubmit} className="flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={isRunning ? onStop : onStart}
@@ -49,14 +29,7 @@ export function AskBar({
           {isRunning ? <StopIcon /> : <MicIcon />}
         </button>
 
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Voice input isn't wired up yet - say your question out loud instead"
-          aria-label="Ask a question"
-          className="flex-1 min-w-0 rounded-full border border-border bg-background px-4 py-2 text-sm"
-        />
+        <p className="flex-1 min-w-0 text-sm text-muted">Tap the mic and ask out loud.</p>
 
         {isActive && (
           <div className="hidden sm:flex items-end gap-0.5 h-6" aria-hidden="true">
@@ -71,7 +44,7 @@ export function AskBar({
         )}
 
         <span className="text-xs text-muted w-24 text-right capitalize shrink-0">{status}</span>
-      </form>
+      </div>
     </div>
   );
 }
