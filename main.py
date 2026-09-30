@@ -1,0 +1,39 @@
+import os
+
+import httpx
+from dotenv import load_dotenv
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+
+load_dotenv()
+
+ASSEMBLYAI_API_KEY = os.environ.get("ASSEMBLYAI_API_KEY", "")
+TOKEN_URL = "https://agents.assemblyai.com/v1/token"
+
+app = FastAPI()
+
+
+@app.get("/api/voice-token")
+async def voice_token():
+    if not ASSEMBLYAI_API_KEY:
+        return JSONResponse(
+            {"error": "server is missing ASSEMBLYAI_API_KEY"}, status_code=500
+        )
+
+    params = {"expires_in_seconds": 60, "max_session_duration_seconds": 600}
+    headers = {"Authorization": f"Bearer {ASSEMBLYAI_API_KEY}"}
+
+    async with httpx.AsyncClient(timeout=10) as client:
+        resp = await client.get(TOKEN_URL, headers=headers, params=params)
+
+    if resp.status_code != 200:
+        return JSONResponse(
+            {"error": "token request failed", "detail": resp.text},
+            status_code=502,
+        )
+
+    return resp.json()
+
+
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
