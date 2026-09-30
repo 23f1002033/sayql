@@ -9,15 +9,49 @@
 <body>
 <header>
   <h1>SayQL</h1>
-  <span id="status">idle</span>
-</header>
-<main>
-  <div id="controls">
+  <div id="header-controls">
     <button id="start-btn">Start</button>
     <button id="stop-btn" disabled>Stop</button>
+    <span id="status" class="status-badge">idle</span>
   </div>
-  <div id="transcript"></div>
+</header>
+<p id="hint">
+  Try: "What was net revenue last month?" | "What were returns last week by city?" | "Which SKU dropped the most vs last month?"
+</p>
+<div id="error-banner" class="hidden"></div>
+<main>
+  <section id="transcript-panel" class="card">
+    <h2>Transcript</h2>
+    <div id="transcript"></div>
+  </section>
+
+  <section id="analysis-panel">
+    <div id="metric-card" class="card hidden">
+      <h2>Metric</h2>
+      <div id="metric-name"></div>
+      <div id="metric-definition"></div>
+    </div>
+
+    <div id="sql-card" class="card">
+      <h2>SQL</h2>
+      <pre id="sql-text"></pre>
+      <div id="sql-error" class="error hidden"></div>
+    </div>
+
+    <div id="result-row">
+      <div id="table-card" class="card">
+        <h2>Result</h2>
+        <div id="table-wrap"></div>
+      </div>
+
+      <div id="chart-card" class="card hidden">
+        <h2>Chart</h2>
+        <canvas id="chart-canvas"></canvas>
+      </div>
+    </div>
+  </section>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.1/chart.umd.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

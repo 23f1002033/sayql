@@ -1,13 +1,22 @@
 import calendar
+import csv
 import random
-import sqlite3
+import sys
 from datetime import date, timedelta
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from sqlalchemy import create_engine
+
+from app.ingest.loader import LOAD_ORDER, create_schema, load_csv
+
+CSV_DIR = Path(__file__).resolve().parent.parent / "data" / "demo"
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "store.db"
 
 SEED = 42
 ANCHOR_DATE = date(2026, 9, 30)  # "today" for this dataset; keep in sync with the system prompt
+WORKSPACE_ID = "demo"
 
 CITIES = [
     ("Mumbai", 0.20),
@@ -90,91 +99,32 @@ def random_date_in_month(rng, year, month):
     return date(year, month, day)
 
 
-def build_schema(conn):
-    conn.executescript(
-        """
-        DROP TABLE IF EXISTS returns;
-        DROP TABLE IF EXISTS order_items;
-        DROP TABLE IF EXISTS orders;
-        DROP TABLE IF EXISTS products;
-        DROP TABLE IF EXISTS customers;
-
-        CREATE TABLE customers (
-            customer_id INTEGER PRIMARY KEY,
-            name TEXT NOT NULL,
-            city TEXT NOT NULL,
-            signup_date TEXT NOT NULL
-        );
-
-        CREATE TABLE products (
-            product_id INTEGER PRIMARY KEY,
-            sku TEXT NOT NULL UNIQUE,
-            name TEXT NOT NULL,
-            category TEXT NOT NULL,
-            price REAL NOT NULL
-        );
-
-        CREATE TABLE orders (
-            order_id INTEGER PRIMARY KEY,
-            customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
-            order_date TEXT NOT NULL,
-            city TEXT NOT NULL
-        );
-
-        CREATE TABLE order_items (
-            order_item_id INTEGER PRIMARY KEY,
-            order_id INTEGER NOT NULL REFERENCES orders(order_id),
-            product_id INTEGER NOT NULL REFERENCES products(product_id),
-            quantity INTEGER NOT NULL,
-            unit_price REAL NOT NULL
-        );
-
-        CREATE TABLE returns (
-            return_id INTEGER PRIMARY KEY,
-            order_item_id INTEGER NOT NULL REFERENCES order_items(order_item_id),
-            return_date TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            reason TEXT NOT NULL
-        );
-
-        CREATE INDEX idx_orders_date ON orders(order_date);
-        CREATE INDEX idx_order_items_order ON order_items(order_id);
-        CREATE INDEX idx_order_items_product ON order_items(product_id);
-        CREATE INDEX idx_returns_item ON returns(order_item_id);
-        """
-    )
-
-
-def seed_customers(conn, rng, count=1600):
+def build_customers(rng, count=1600):
     cities = [c for c, _ in CITIES]
     weights = [w for _, w in CITIES]
     rows = []
     for i in range(1, count + 1):
         city = rng.choices(cities, weights=weights)[0]
         signup = ANCHOR_DATE - timedelta(days=rng.randint(30, 730))
-        rows.append((i, f"Customer {i}", city, signup.isoformat()))
-    conn.executemany(
-        "INSERT INTO customers (customer_id, name, city, signup_date) VALUES (?, ?, ?, ?)",
-        rows,
-    )
-    return [r[0] for r in rows], {r[0]: r[2] for r in rows}
+        rows.append({"customer_id": i, "name": f"Customer {i}", "city": city, "signup_date": signup.isoformat()})
+    customer_city = {r["customer_id"]: r["city"] for r in rows}
+    return rows, customer_city
 
 
-def seed_products(conn, rng):
+def build_products(rng):
     rows = []
     for i, (name, category, price) in enumerate(PRODUCTS, start=1):
-        sku = f"SKU-{i:04d}"
-        rows.append((i, sku, name, category, float(price)))
-    conn.executemany(
-        "INSERT INTO products (product_id, sku, name, category, price) VALUES (?, ?, ?, ?, ?)",
-        rows,
-    )
+        rows.append({
+            "product_id": i, "sku": f"SKU-{i:04d}", "name": name,
+            "category": category, "price": float(price),
+        })
     base_weights = [rng.uniform(0.5, 2.0) for _ in PRODUCTS]
     return rows, base_weights
 
 
-def seed_orders_and_items(conn, rng, customer_ids, customer_city, product_rows, base_weights):
-    planted_idx = next(i for i, p in enumerate(product_rows) if p[2] == PLANTED_PRODUCT)
+def build_orders_and_items(rng, customer_rows, customer_city, product_rows, base_weights):
+    planted_idx = next(i for i, p in enumerate(product_rows) if p["name"] == PLANTED_PRODUCT)
+    customer_ids = [r["customer_id"] for r in customer_rows]
 
     order_id = 1
     item_id = 1
@@ -196,19 +146,26 @@ def seed_orders_and_items(conn, rng, customer_ids, customer_city, product_rows, 
             city = customer_city[customer_id]
             order_date = random_date_in_month(rng, year, month)
 
-            order_rows.append((order_id, customer_id, order_date.isoformat(), city))
+            order_rows.append({
+                "order_id": order_id, "customer_id": customer_id,
+                "order_date": order_date.isoformat(), "city": city,
+            })
 
             n_items = rng.choices([1, 2, 3], weights=[60, 30, 10])[0]
             for _ in range(n_items):
                 product_idx = rng.choices(range(len(product_rows)), weights=weights)[0]
                 product = product_rows[product_idx]
                 quantity = rng.choices([1, 2, 3], weights=[70, 20, 10])[0]
-                unit_price = product[4]
+                unit_price = product["price"]
 
-                item_rows.append((item_id, order_id, product[0], quantity, unit_price))
+                item_rows.append({
+                    "order_item_id": item_id, "order_id": order_id,
+                    "product_id": product["product_id"], "quantity": quantity,
+                    "unit_price": unit_price,
+                })
 
                 is_planted = (
-                    product[2] == PLANTED_PRODUCT
+                    product["name"] == PLANTED_PRODUCT
                     and city == PLANTED_CITY
                     and PLANTED_SPIKE_START <= order_date <= PLANTED_SPIKE_END
                 )
@@ -221,56 +178,71 @@ def seed_orders_and_items(conn, rng, customer_ids, customer_city, product_rows, 
                         reason = rng.choices(["defective", "wrong item"], weights=[70, 30])[0]
                     else:
                         reason = rng.choice(RETURN_REASONS)
-                    return_rows.append((return_id, item_id, return_date.isoformat(), quantity, reason))
+                    return_rows.append({
+                        "return_id": return_id, "order_item_id": item_id,
+                        "return_date": return_date.isoformat(), "quantity": quantity,
+                        "reason": reason,
+                    })
                     return_id += 1
 
                 item_id += 1
 
             order_id += 1
 
-    conn.executemany(
-        "INSERT INTO orders (order_id, customer_id, order_date, city) VALUES (?, ?, ?, ?)",
-        order_rows,
-    )
-    conn.executemany(
-        "INSERT INTO order_items (order_item_id, order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)",
-        item_rows,
-    )
-    conn.executemany(
-        "INSERT INTO returns (return_id, order_item_id, return_date, quantity, reason) VALUES (?, ?, ?, ?, ?)",
-        return_rows,
-    )
+    return order_rows, item_rows, return_rows
 
-    return len(order_rows), len(item_rows), len(return_rows)
+
+def write_csv(path, fieldnames, rows):
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
 
 
 def main():
+    CSV_DIR.mkdir(parents=True, exist_ok=True)
     DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if DB_PATH.exists():
-        DB_PATH.unlink()
 
     rng = random.Random(SEED)
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("PRAGMA foreign_keys = ON")
 
-    build_schema(conn)
-
-    customer_ids, customer_city = seed_customers(conn, rng)
-    product_rows, base_weights = seed_products(conn, rng)
-    n_orders, n_items, n_returns = seed_orders_and_items(
-        conn, rng, customer_ids, customer_city, product_rows, base_weights
+    customer_rows, customer_city = build_customers(rng)
+    product_rows, base_weights = build_products(rng)
+    order_rows, item_rows, return_rows = build_orders_and_items(
+        rng, customer_rows, customer_city, product_rows, base_weights
     )
 
-    conn.commit()
-    conn.close()
+    write_csv(CSV_DIR / "customers.csv", ["customer_id", "name", "city", "signup_date"], customer_rows)
+    write_csv(CSV_DIR / "products.csv", ["product_id", "sku", "name", "category", "price"], product_rows)
+    write_csv(CSV_DIR / "orders.csv", ["order_id", "customer_id", "order_date", "city"], order_rows)
+    write_csv(
+        CSV_DIR / "order_items.csv",
+        ["order_item_id", "order_id", "product_id", "quantity", "unit_price"],
+        item_rows,
+    )
+    write_csv(
+        CSV_DIR / "returns.csv",
+        ["return_id", "order_item_id", "return_date", "quantity", "reason"],
+        return_rows,
+    )
+
+    engine = create_engine(f"sqlite:///{DB_PATH}")
+    create_schema(engine)
+    csv_paths = {
+        "customers": CSV_DIR / "customers.csv",
+        "products": CSV_DIR / "products.csv",
+        "orders": CSV_DIR / "orders.csv",
+        "order_items": CSV_DIR / "order_items.csv",
+        "returns": CSV_DIR / "returns.csv",
+    }
+    counts = {}
+    for table in LOAD_ORDER:
+        counts[table] = load_csv(engine, table, csv_paths[table], workspace_id=WORKSPACE_ID)
 
     print("seed complete:", DB_PATH)
+    print("csv source:", CSV_DIR)
     print("row counts:")
-    print(f"  customers:   {len(customer_ids)}")
-    print(f"  products:    {len(product_rows)}")
-    print(f"  orders:      {n_orders}")
-    print(f"  order_items: {n_items}")
-    print(f"  returns:     {n_returns}")
+    for table in LOAD_ORDER:
+        print(f"  {table}: {counts[table]}")
     print()
     print("planted stories:")
     print(f"  return spike: '{PLANTED_PRODUCT}' in {PLANTED_CITY}, elevated returns")
@@ -280,6 +252,7 @@ def main():
     festive_list = ", ".join(f"{y}-{m:02d}" for y, m in sorted(FESTIVE_MONTHS))
     print(f"  festive bump: overall order volume up {int((FESTIVE_MULTIPLIER - 1) * 100)}% in {festive_list}")
     print(f"  anchor date (treat as 'today' for relative date terms): {ANCHOR_DATE}")
+    print(f"  workspace_id: {WORKSPACE_ID}")
 
 
 if __name__ == "__main__":

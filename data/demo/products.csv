@@ -1,0 +1,31 @@
+product_id,sku,name,category,price
+1,SKU-0001,Wireless Earbuds Pro,Audio,2499.0
+2,SKU-0002,Bluetooth Speaker Mini,Audio,1799.0
+3,SKU-0003,Smart Watch X2,Wearables,3499.0
+4,SKU-0004,Fitness Band Lite,Wearables,1299.0
+5,SKU-0005,USB-C Fast Charger 65W,Electronics,999.0
+6,SKU-0006,Power Bank 20000mAh,Electronics,1499.0
+7,SKU-0007,Wireless Mouse,Accessories,599.0
+8,SKU-0008,Mechanical Keyboard Compact,Accessories,2999.0
+9,SKU-0009,Laptop Stand Aluminium,Accessories,899.0
+10,SKU-0010,Phone Case Clear,Accessories,299.0
+11,SKU-0011,Tempered Glass Screen Protector,Accessories,199.0
+12,SKU-0012,LED Desk Lamp,Home,1299.0
+13,SKU-0013,Smart Plug,Home,799.0
+14,SKU-0014,Portable Blender,Home,1599.0
+15,SKU-0015,Electric Kettle,Home,1199.0
+16,SKU-0016,Air Purifier Mini,Home,3999.0
+17,SKU-0017,Noise Cancelling Headphones,Audio,4999.0
+18,SKU-0018,Neckband Earphones,Audio,899.0
+19,SKU-0019,Smart Ring,Wearables,4499.0
+20,SKU-0020,Action Camera,Electronics,3999.0
+21,SKU-0021,Ring Light 10 inch,Electronics,1099.0
+22,SKU-0022,Tripod Stand,Accessories,699.0
+23,SKU-0023,Car Phone Mount,Accessories,399.0
+24,SKU-0024,Wireless Charger Pad,Electronics,899.0
+25,SKU-0025,Bluetooth Adapter,Electronics,499.0
+26,SKU-0026,Yoga Mat Premium,Home,999.0
+27,SKU-0027,Resistance Bands Set,Home,599.0
+28,SKU-0028,Water Bottle Insulated,Home,499.0
+29,SKU-0029,Backpack Urban,Accessories,1999.0
+30,SKU-0030,Travel Organizer Set,Accessories,799.0

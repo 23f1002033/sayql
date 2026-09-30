@@ -2,11 +2,26 @@ const startBtn = document.getElementById("start-btn");
 const stopBtn = document.getElementById("stop-btn");
 const statusEl = document.getElementById("status");
 const transcriptEl = document.getElementById("transcript");
+const errorBannerEl = document.getElementById("error-banner");
+
+const metricCardEl = document.getElementById("metric-card");
+const metricNameEl = document.getElementById("metric-name");
+const metricDefinitionEl = document.getElementById("metric-definition");
+
+const sqlTextEl = document.getElementById("sql-text");
+const sqlErrorEl = document.getElementById("sql-error");
+
+const tableWrapEl = document.getElementById("table-wrap");
+const chartCardEl = document.getElementById("chart-card");
+const chartCanvasEl = document.getElementById("chart-canvas");
 
 const SAMPLE_RATE = 24000;
 
 const SYSTEM_PROMPT = `You are SayQL, a voice analyst for a small D2C business owner.
-Today's date is 2026-09-30; use it to resolve relative date terms like "last month" or "last week".
+Today's date is 2026-09-30. Resolve relative date terms against it, using date ranges that cover full days:
+- "last week" means the 7 full days before today.
+- "last month" means the full previous calendar month.
+- "this month" means the current calendar month, from its start through today.
 
 Rules:
 - Before writing SQL for any business term (net revenue, return rate, AOV, active customers, and similar), call get_metric first and use its definition and SQL pattern.
@@ -63,18 +78,39 @@ let audioContext = null;
 let micStream = null;
 let workletNode = null;
 let sessionReady = false;
+let intentionalStop = false;
 
 let nextPlayTime = 0;
 let scheduledSources = [];
 let partialUserEl = null;
 let pendingToolResults = [];
-let lastQueryResult = null; // full run_sql result, for the UI (wired in M3)
+
+let currentSql = "";
+let currentMetric = null;
+let lastQueryResult = null;
+let chartInstance = null;
 
 startBtn.addEventListener("click", start);
 stopBtn.addEventListener("click", stop);
 
 function setStatus(text) {
   statusEl.textContent = text;
+}
+
+function showError(text) {
+  errorBannerEl.textContent = text;
+  errorBannerEl.classList.remove("hidden");
+}
+
+function clearError() {
+  errorBannerEl.textContent = "";
+  errorBannerEl.classList.add("hidden");
+}
+
+function clearChildren(el) {
+  while (el.firstChild) {
+    el.removeChild(el.firstChild);
+  }
 }
 
 function appendLine(role, text) {
@@ -103,6 +139,131 @@ function finalizeTranscript(role, text) {
   } else {
     appendLine(role, label);
   }
+}
+
+function updateMetricCard(metric) {
+  currentMetric = metric;
+  if (!metric || !metric.found) {
+    metricCardEl.classList.add("hidden");
+    return;
+  }
+  metricCardEl.classList.remove("hidden");
+  metricNameEl.textContent = metric.name;
+  metricDefinitionEl.textContent = metric.definition;
+}
+
+function updateSqlPanel(sql, errorMessage) {
+  currentSql = sql || "";
+  sqlTextEl.textContent = currentSql;
+  if (errorMessage) {
+    sqlErrorEl.textContent = errorMessage;
+    sqlErrorEl.classList.remove("hidden");
+  } else {
+    sqlErrorEl.textContent = "";
+    sqlErrorEl.classList.add("hidden");
+  }
+}
+
+function renderTable(result) {
+  clearChildren(tableWrapEl);
+
+  if (!result || !result.columns || result.columns.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty-hint";
+    empty.textContent = "No results yet.";
+    tableWrapEl.appendChild(empty);
+    return;
+  }
+
+  const table = document.createElement("table");
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  result.columns.forEach((col) => {
+    const th = document.createElement("th");
+    th.textContent = col;
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+  result.rows.forEach((row) => {
+    const tr = document.createElement("tr");
+    row.forEach((cell) => {
+      const td = document.createElement("td");
+      td.textContent = cell === null || cell === undefined ? "" : String(cell);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  tableWrapEl.appendChild(table);
+}
+
+function isDateLike(value) {
+  return typeof value === "string" && /^\d{4}-\d{2}(-\d{2})?$/.test(value);
+}
+
+function pickChartType(result) {
+  if (!result || !result.columns || result.columns.length !== 2 || result.rows.length === 0) {
+    return null;
+  }
+  const firstCol = result.rows.map((r) => r[0]);
+  const secondCol = result.rows.map((r) => r[1]);
+
+  const secondIsNumber = secondCol.every((v) => typeof v === "number");
+  if (!secondIsNumber) {
+    return null;
+  }
+
+  if (firstCol.every(isDateLike)) {
+    return "line";
+  }
+  if (firstCol.every((v) => typeof v === "string")) {
+    return "bar";
+  }
+  return null;
+}
+
+function renderChart(result) {
+  if (chartInstance) {
+    chartInstance.destroy();
+    chartInstance = null;
+  }
+
+  const type = pickChartType(result);
+  if (!type) {
+    chartCardEl.classList.add("hidden");
+    return;
+  }
+
+  chartCardEl.classList.remove("hidden");
+  const labels = result.rows.map((r) => String(r[0]));
+  const values = result.rows.map((r) => r[1]);
+
+  chartInstance = new Chart(chartCanvasEl, {
+    type,
+    data: {
+      labels,
+      datasets: [
+        {
+          label: result.columns[1],
+          data: values,
+          backgroundColor: "#2563eb",
+          borderColor: "#2563eb",
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: "#c7cad1" }, grid: { color: "#2a2d36" } },
+        y: { ticks: { color: "#c7cad1" }, grid: { color: "#2a2d36" } },
+      },
+    },
+  });
 }
 
 function bytesToBase64(bytes) {
@@ -174,9 +335,25 @@ async function handleToolCall(name, callId, args) {
     });
     const result = await resp.json();
 
+    if (name === "get_metric") {
+      updateMetricCard(result);
+    }
+
+    if (name === "run_sql") {
+      if (result && result.error) {
+        updateSqlPanel(args.sql || "", result.error);
+        renderTable(null);
+        renderChart(null);
+      } else {
+        lastQueryResult = result;
+        updateSqlPanel(args.sql || "", null);
+        renderTable(result);
+        renderChart(result);
+      }
+    }
+
     let compact = result;
     if (name === "run_sql" && result && Array.isArray(result.rows)) {
-      lastQueryResult = result;
       compact = {
         columns: result.columns,
         row_count: result.row_count,
@@ -187,6 +364,9 @@ async function handleToolCall(name, callId, args) {
 
     pendingToolResults.push({ call_id: callId, result: JSON.stringify(compact) });
   } catch (err) {
+    if (name === "run_sql") {
+      updateSqlPanel(args.sql || "", String(err));
+    }
     pendingToolResults.push({
       call_id: callId,
       result: JSON.stringify({ error: String(err) }),
@@ -217,16 +397,13 @@ function handleMessage(msg) {
 
     case "session.error":
     case "error":
-      setStatus("error: " + msg.message);
+      showError(msg.message || "session error");
       appendLine("system", "error: " + msg.message);
       break;
 
     case "input.speech.started":
-      setStatus("listening (you)");
-      break;
-
     case "input.speech.stopped":
-      setStatus("thinking");
+      setStatus("listening");
       break;
 
     case "transcript.user.delta":
@@ -238,7 +415,7 @@ function handleMessage(msg) {
       break;
 
     case "reply.started":
-      setStatus("speaking (agent)");
+      setStatus("speaking");
       break;
 
     case "reply.audio":
@@ -266,7 +443,11 @@ function handleMessage(msg) {
           args = {};
         }
       }
-      handleToolCall(msg.name, msg.call_id, args || {});
+      args = args || {};
+      if (msg.name === "run_sql") {
+        setStatus("running query");
+      }
+      handleToolCall(msg.name, msg.call_id, args);
       break;
     }
 
@@ -278,20 +459,26 @@ function handleMessage(msg) {
 async function start() {
   startBtn.disabled = true;
   setStatus("connecting");
+  clearError();
 
   try {
     const tokenResp = await fetch("/api/voice-token");
     if (!tokenResp.ok) {
-      throw new Error("token request failed");
+      const body = await tokenResp.json().catch(() => ({}));
+      throw new Error("token_failure:" + (body.error || "token request failed"));
     }
     const { token } = await tokenResp.json();
 
     audioContext = new AudioContext({ sampleRate: SAMPLE_RATE });
     await audioContext.audioWorklet.addModule("worklet.js");
 
-    micStream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: true, noiseSuppression: false, channelCount: 1 },
-    });
+    try {
+      micStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: false, channelCount: 1 },
+      });
+    } catch (err) {
+      throw new Error("mic_denied:" + err.message);
+    }
 
     workletNode = new AudioWorkletNode(audioContext, "mic-processor");
     workletNode.port.onmessage = (event) => {
@@ -305,6 +492,7 @@ async function start() {
     const micSource = audioContext.createMediaStreamSource(micStream);
     micSource.connect(workletNode);
 
+    intentionalStop = false;
     ws = new WebSocket(`wss://agents.assemblyai.com/v1/ws?token=${token}`);
 
     ws.onopen = () => {
@@ -323,23 +511,36 @@ async function start() {
     ws.onmessage = (event) => handleMessage(JSON.parse(event.data));
 
     ws.onerror = () => {
-      setStatus("error: connection failed");
+      showError("Connection error.");
     };
 
-    ws.onclose = () => {
+    ws.onclose = (event) => {
       teardownAudio();
+      if (!intentionalStop && event.code !== 1000) {
+        showError(`Connection closed unexpectedly (code ${event.code}).`);
+      }
       setStatus("idle");
       startBtn.disabled = false;
       stopBtn.disabled = true;
+      intentionalStop = false;
     };
   } catch (err) {
-    setStatus("error: " + err.message);
+    const msg = String((err && err.message) || err);
+    if (msg.startsWith("token_failure:")) {
+      showError("Could not get a voice token: " + msg.slice("token_failure:".length));
+    } else if (msg.startsWith("mic_denied:")) {
+      showError("Microphone access was denied or unavailable: " + msg.slice("mic_denied:".length));
+    } else {
+      showError("Error: " + msg);
+    }
+    setStatus("idle");
     startBtn.disabled = false;
     teardownAudio();
   }
 }
 
 function stop() {
+  intentionalStop = true;
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ type: "session.end" }));
     ws.close();

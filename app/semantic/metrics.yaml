@@ -1,0 +1,172 @@
+# Semantic layer for SayQL.
+#
+# Every metric compiles to SQL from the structured "sql" block below, not
+# from free text - the compiler substitutes only allowlisted identifiers
+# (dimension_columns) into developer-authored fragments, and all values
+# (dates, filter values, workspace_id) are passed as bound parameters.
+#
+# ambiguous_terms lists spoken terms that map to more than one metric; the
+# agent must ask which one instead of guessing.
+
+metrics:
+  net_revenue:
+    version: 1
+    owner: finance
+    description: >
+      Gross revenue from order items, minus the refunded amount for any
+      returned units, for orders placed in the period.
+    formula: "sum(quantity * unit_price) - sum(returned_quantity * unit_price)"
+    aliases: ["net revenue", "net sales"]
+    default_grain: month
+    sql:
+      base_table: >
+        order_items oi
+        JOIN orders o ON o.order_id = oi.order_id
+        JOIN products p ON p.product_id = oi.product_id
+        LEFT JOIN returns r ON r.order_item_id = oi.order_item_id
+      value_expr: "SUM(oi.quantity * oi.unit_price) - COALESCE(SUM(r.quantity * oi.unit_price), 0)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+        sku: "p.sku"
+
+  gross_revenue:
+    version: 1
+    owner: finance
+    description: >
+      Revenue from order items before subtracting returns, for orders
+      placed in the period.
+    formula: "sum(quantity * unit_price)"
+    aliases: ["gross revenue", "gross sales", "total sales"]
+    default_grain: month
+    sql:
+      base_table: >
+        order_items oi
+        JOIN orders o ON o.order_id = oi.order_id
+        JOIN products p ON p.product_id = oi.product_id
+      value_expr: "SUM(oi.quantity * oi.unit_price)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+        sku: "p.sku"
+
+  refund_amount:
+    version: 1
+    owner: finance
+    description: >
+      Value of units returned, based on the returns recorded in the
+      period (by return date, not order date).
+    formula: "sum(returned_quantity * unit_price)"
+    aliases: ["refund amount", "refunds", "amount refunded"]
+    default_grain: month
+    sql:
+      base_table: >
+        returns r
+        JOIN order_items oi ON oi.order_item_id = r.order_item_id
+        JOIN orders o ON o.order_id = oi.order_id
+        JOIN products p ON p.product_id = oi.product_id
+      value_expr: "SUM(r.quantity * oi.unit_price)"
+      date_column: "r.return_date"
+      workspace_column: "r.workspace_id"
+      dimension_columns:
+        city: "o.city"
+        sku: "p.sku"
+
+  return_rate:
+    version: 1
+    owner: operations
+    description: >
+      Units returned divided by units sold, for orders placed in the
+      period. Returned units are matched by order date, not return date.
+    formula: "sum(returned_quantity) / sum(quantity)"
+    aliases: ["return rate", "returns rate"]
+    default_grain: month
+    sql:
+      base_table: >
+        order_items oi
+        JOIN orders o ON o.order_id = oi.order_id
+        JOIN products p ON p.product_id = oi.product_id
+        LEFT JOIN returns r ON r.order_item_id = oi.order_item_id
+      value_expr: "CAST(COALESCE(SUM(r.quantity), 0) AS REAL) / NULLIF(SUM(oi.quantity), 0)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+        sku: "p.sku"
+
+  aov:
+    version: 1
+    owner: finance
+    description: >
+      Gross revenue divided by the number of distinct orders placed in
+      the period.
+    formula: "sum(quantity * unit_price) / count(distinct order_id)"
+    aliases: ["aov", "average order value"]
+    default_grain: month
+    sql:
+      base_table: >
+        order_items oi
+        JOIN orders o ON o.order_id = oi.order_id
+      value_expr: "SUM(oi.quantity * oi.unit_price) / COUNT(DISTINCT o.order_id)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+
+  active_customers:
+    version: 1
+    owner: growth
+    description: >
+      Distinct customers who placed at least one order in the period.
+    formula: "count(distinct customer_id)"
+    aliases: ["active customers", "active customer count"]
+    default_grain: month
+    sql:
+      base_table: "orders o"
+      value_expr: "COUNT(DISTINCT o.customer_id)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+
+  orders_count:
+    version: 1
+    owner: operations
+    description: >
+      Count of orders placed in the period.
+    formula: "count(order_id)"
+    aliases: ["orders", "number of orders", "order count"]
+    default_grain: month
+    sql:
+      base_table: "orders o"
+      value_expr: "COUNT(*)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+
+  units_sold:
+    version: 1
+    owner: operations
+    description: >
+      Total quantity of items sold in the period, before returns.
+    formula: "sum(quantity)"
+    aliases: ["units sold", "units", "quantity sold"]
+    default_grain: month
+    sql:
+      base_table: >
+        order_items oi
+        JOIN orders o ON o.order_id = oi.order_id
+        JOIN products p ON p.product_id = oi.product_id
+      value_expr: "SUM(oi.quantity)"
+      date_column: "o.order_date"
+      workspace_column: "o.workspace_id"
+      dimension_columns:
+        city: "o.city"
+        sku: "p.sku"
+
+ambiguous_terms:
+  revenue: [gross_revenue, net_revenue]
+  sales: [gross_revenue, net_revenue]

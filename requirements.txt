@@ -3,3 +3,8 @@ uvicorn[standard]
 httpx
 python-dotenv
 pyyaml
+pydantic
+sqlalchemy
+sqlglot
+psycopg2-binary
+pytest

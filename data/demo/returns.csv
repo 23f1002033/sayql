@@ -1,0 +1,1502 @@
+return_id,order_item_id,return_date,quantity,reason
+1,51,2025-10-15,1,damaged in transit
+2,55,2025-10-27,1,no longer needed
+3,67,2025-10-07,1,changed mind
+4,77,2025-10-19,2,no longer needed
+5,116,2025-11-03,1,wrong item
+6,126,2025-10-16,2,wrong item
+7,152,2025-11-04,1,no longer needed
+8,157,2025-10-31,1,damaged in transit
+9,167,2025-10-30,1,no longer needed
+10,274,2025-11-01,1,changed mind
+11,337,2025-10-22,1,no longer needed
+12,358,2025-10-10,3,no longer needed
+13,388,2025-10-27,1,damaged in transit
+14,413,2025-10-31,1,damaged in transit
+15,417,2025-10-13,1,no longer needed
+16,437,2025-10-22,3,damaged in transit
+17,451,2025-10-15,1,damaged in transit
+18,455,2025-10-12,2,changed mind
+19,483,2025-10-27,3,wrong item
+20,510,2025-10-12,1,defective
+21,630,2025-10-28,1,damaged in transit
+22,640,2025-11-03,1,defective
+23,653,2025-11-08,3,damaged in transit
+24,656,2025-10-11,3,wrong item
+25,681,2025-10-15,2,no longer needed
+26,715,2025-10-15,3,damaged in transit
+27,730,2025-10-29,1,defective
+28,731,2025-10-11,1,no longer needed
+29,734,2025-10-10,2,wrong item
+30,756,2025-11-03,3,defective
+31,768,2025-11-05,1,changed mind
+32,786,2025-10-26,1,changed mind
+33,824,2025-10-23,1,changed mind
+34,838,2025-10-27,1,changed mind
+35,851,2025-10-31,1,changed mind
+36,855,2025-10-17,1,no longer needed
+37,868,2025-10-17,1,damaged in transit
+38,875,2025-10-14,1,defective
+39,879,2025-11-05,1,defective
+40,912,2025-11-06,2,no longer needed
+41,1012,2025-10-27,1,defective
+42,1016,2025-10-22,1,changed mind
+43,1024,2025-10-23,1,defective
+44,1096,2025-10-19,1,wrong item
+45,1103,2025-10-14,1,no longer needed
+46,1117,2025-10-31,1,changed mind
+47,1118,2025-10-23,2,damaged in transit
+48,1127,2025-10-11,1,defective
+49,1154,2025-10-29,1,changed mind
+50,1192,2025-10-26,1,no longer needed
+51,1211,2025-10-19,1,changed mind
+52,1223,2025-10-13,1,no longer needed
+53,1226,2025-10-24,1,no longer needed
+54,1245,2025-11-01,1,wrong item
+55,1254,2025-11-01,2,damaged in transit
+56,1264,2025-10-16,1,wrong item
+57,1265,2025-11-08,2,damaged in transit
+58,1266,2025-11-08,1,no longer needed
+59,1269,2025-10-23,3,wrong item
+60,1273,2025-11-06,1,changed mind
+61,1285,2025-10-26,1,wrong item
+62,1335,2025-11-06,3,changed mind
+63,1357,2025-10-15,1,no longer needed
+64,1359,2025-10-09,1,wrong item
+65,1361,2025-10-17,1,wrong item
+66,1411,2025-10-19,1,defective
+67,1433,2025-10-26,1,no longer needed
+68,1441,2025-10-25,1,defective
+69,1454,2025-10-30,1,no longer needed
+70,1485,2025-10-06,1,no longer needed
+71,1512,2025-10-11,1,defective
+72,1513,2025-10-12,2,changed mind
+73,1522,2025-11-05,1,no longer needed
+74,1531,2025-10-08,2,wrong item
+75,1536,2025-10-29,1,wrong item
+76,1543,2025-10-22,1,defective
+77,1599,2025-10-22,1,wrong item
+78,1622,2025-10-29,1,no longer needed
+79,1627,2025-10-21,1,defective
+80,1648,2025-10-27,2,changed mind
+81,1660,2025-10-20,2,changed mind
+82,1723,2025-10-19,1,changed mind
+83,1725,2025-10-15,1,changed mind
+84,1730,2025-10-07,1,damaged in transit
+85,1743,2025-10-29,3,wrong item
+86,1751,2025-11-02,1,wrong item
+87,1764,2025-11-05,1,changed mind
+88,1787,2025-10-25,2,wrong item
+89,1793,2025-10-19,2,changed mind
+90,1874,2025-10-16,1,damaged in transit
+91,1885,2025-10-27,1,damaged in transit
+92,1888,2025-10-25,1,damaged in transit
+93,1895,2025-10-22,1,wrong item
+94,1907,2025-11-01,1,damaged in transit
+95,1911,2025-10-19,1,changed mind
+96,1921,2025-10-19,2,defective
+97,1947,2025-10-12,1,defective
+98,1971,2025-10-11,2,no longer needed
+99,1972,2025-10-23,1,no longer needed
+100,1987,2025-10-29,1,wrong item
+101,2004,2025-11-04,1,no longer needed
+102,2023,2025-10-18,1,wrong item
+103,2085,2025-10-27,1,defective
+104,2090,2025-10-10,2,changed mind
+105,2098,2025-10-13,1,no longer needed
+106,2132,2025-11-04,2,defective
+107,2209,2025-10-17,1,wrong item
+108,2242,2025-10-12,2,defective
+109,2263,2025-10-06,1,no longer needed
+110,2293,2025-10-30,1,damaged in transit
+111,2314,2025-10-11,1,changed mind
+112,2372,2025-10-16,1,wrong item
+113,2377,2025-10-12,1,changed mind
+114,2404,2025-10-12,1,wrong item
+115,2410,2025-10-29,1,wrong item
+116,2421,2025-10-10,1,no longer needed
+117,2428,2025-10-17,1,wrong item
+118,2484,2025-10-26,2,defective
+119,2519,2025-10-23,1,defective
+120,2530,2025-11-05,2,defective
+121,2570,2025-10-23,1,changed mind
+122,2607,2025-10-26,1,defective
+123,2639,2025-10-09,3,changed mind
+124,2679,2025-10-23,2,no longer needed
+125,2736,2025-11-02,1,damaged in transit
+126,2752,2025-11-05,1,wrong item
+127,2767,2025-10-27,2,defective
+128,2797,2025-10-10,1,wrong item
+129,2801,2025-10-22,1,wrong item
+130,2815,2025-10-16,3,defective
+131,2841,2025-10-30,2,wrong item
+132,2852,2025-10-24,1,changed mind
+133,2891,2025-10-16,1,wrong item
+134,2895,2025-10-29,2,wrong item
+135,2926,2025-11-01,1,damaged in transit
+136,2967,2025-11-01,1,no longer needed
+137,2975,2025-10-29,1,wrong item
+138,2990,2025-10-14,2,damaged in transit
+139,3033,2025-10-23,1,damaged in transit
+140,3036,2025-11-01,1,no longer needed
+141,3055,2025-10-17,1,wrong item
+142,3070,2025-10-23,3,changed mind
+143,3071,2025-10-23,1,no longer needed
+144,3074,2025-10-19,1,wrong item
+145,3132,2025-10-24,3,no longer needed
+146,3148,2025-10-30,1,changed mind
+147,3166,2025-10-30,1,defective
+148,3197,2025-10-24,1,defective
+149,3231,2025-11-01,1,no longer needed
+150,3268,2025-10-09,3,damaged in transit
+151,3310,2025-10-13,1,damaged in transit
+152,3323,2025-10-22,2,wrong item
+153,3365,2025-10-08,1,no longer needed
+154,3512,2025-10-31,1,wrong item
+155,3528,2025-10-15,1,changed mind
+156,3542,2025-10-22,1,damaged in transit
+157,3589,2025-10-28,2,defective
+158,3625,2025-10-24,1,changed mind
+159,3629,2025-11-05,1,changed mind
+160,3643,2025-10-30,1,changed mind
+161,3653,2025-10-15,1,no longer needed
+162,3661,2025-10-13,3,defective
+163,3666,2025-10-15,1,damaged in transit
+164,3668,2025-10-18,1,damaged in transit
+165,3673,2025-10-26,2,damaged in transit
+166,3681,2025-10-08,2,wrong item
+167,3692,2025-10-24,1,wrong item
+168,3717,2025-10-30,1,defective
+169,3736,2025-10-21,3,no longer needed
+170,3746,2025-10-21,1,changed mind
+171,3779,2025-10-21,3,wrong item
+172,3800,2025-10-25,1,no longer needed
+173,3818,2025-10-28,1,no longer needed
+174,3832,2025-10-17,1,damaged in transit
+175,3835,2025-10-12,1,damaged in transit
+176,3840,2025-10-19,1,damaged in transit
+177,3883,2025-10-11,1,wrong item
+178,3886,2025-10-27,1,defective
+179,3903,2025-11-01,1,changed mind
+180,3924,2025-10-14,1,wrong item
+181,3925,2025-10-26,2,no longer needed
+182,3930,2025-10-09,1,changed mind
+183,3968,2025-10-07,1,damaged in transit
+184,4005,2025-10-18,2,wrong item
+185,4052,2025-10-23,2,no longer needed
+186,4061,2025-10-29,3,defective
+187,4078,2025-11-12,1,changed mind
+188,4079,2025-11-13,3,damaged in transit
+189,4080,2025-11-10,1,wrong item
+190,4088,2025-11-29,1,changed mind
+191,4137,2025-11-14,1,wrong item
+192,4142,2025-11-24,1,wrong item
+193,4164,2025-11-21,1,wrong item
+194,4166,2025-11-27,1,damaged in transit
+195,4184,2025-11-30,1,defective
+196,4188,2025-11-11,1,defective
+197,4195,2025-11-10,2,no longer needed
+198,4294,2025-11-14,1,no longer needed
+199,4302,2025-11-29,2,damaged in transit
+200,4308,2025-11-24,1,damaged in transit
+201,4310,2025-12-05,1,damaged in transit
+202,4320,2025-12-06,1,wrong item
+203,4372,2025-12-02,1,damaged in transit
+204,4417,2025-11-15,1,defective
+205,4422,2025-12-03,3,no longer needed
+206,4437,2025-12-02,1,wrong item
+207,4445,2025-11-20,1,wrong item
+208,4469,2025-11-23,1,changed mind
+209,4532,2025-12-01,1,no longer needed
+210,4536,2025-11-30,1,defective
+211,4547,2025-11-27,3,defective
+212,4579,2025-12-05,1,wrong item
+213,4599,2025-11-28,1,changed mind
+214,4607,2025-11-09,1,damaged in transit
+215,4641,2025-11-08,2,no longer needed
+216,4646,2025-11-10,2,wrong item
+217,4657,2025-12-07,1,damaged in transit
+218,4698,2025-11-19,1,changed mind
+219,4733,2025-11-10,1,damaged in transit
+220,4744,2025-11-26,1,changed mind
+221,4746,2025-12-04,1,defective
+222,4789,2025-11-26,1,changed mind
+223,4814,2025-11-08,1,no longer needed
+224,4885,2025-11-19,2,defective
+225,4899,2025-11-10,1,no longer needed
+226,4904,2025-11-04,1,no longer needed
+227,4912,2025-11-30,1,damaged in transit
+228,4963,2025-11-24,2,wrong item
+229,4969,2025-11-25,2,defective
+230,4971,2025-11-17,1,no longer needed
+231,4981,2025-11-24,2,defective
+232,4984,2025-11-16,1,defective
+233,4991,2025-11-17,1,no longer needed
+234,5019,2025-11-19,1,wrong item
+235,5060,2025-11-26,1,no longer needed
+236,5068,2025-11-25,1,defective
+237,5084,2025-11-09,2,changed mind
+238,5117,2025-11-25,1,damaged in transit
+239,5143,2025-11-21,2,wrong item
+240,5165,2025-11-07,1,damaged in transit
+241,5185,2025-11-22,1,defective
+242,5194,2025-11-09,1,defective
+243,5208,2025-11-18,1,defective
+244,5232,2025-11-05,1,changed mind
+245,5280,2025-11-22,1,defective
+246,5295,2025-11-27,1,wrong item
+247,5296,2025-11-28,1,defective
+248,5298,2025-12-02,1,wrong item
+249,5299,2025-12-02,2,wrong item
+250,5309,2025-11-22,1,damaged in transit
+251,5320,2025-11-13,1,no longer needed
+252,5339,2025-12-01,1,defective
+253,5342,2025-11-17,1,defective
+254,5381,2025-11-28,2,wrong item
+255,5403,2025-11-04,3,defective
+256,5464,2025-11-16,1,no longer needed
+257,5469,2025-11-18,1,defective
+258,5471,2025-11-23,1,no longer needed
+259,5558,2025-11-17,3,wrong item
+260,5597,2025-11-10,1,defective
+261,5603,2025-11-04,2,wrong item
+262,5631,2025-11-09,2,wrong item
+263,5633,2025-11-27,3,no longer needed
+264,5658,2025-11-08,1,wrong item
+265,5708,2025-11-16,3,damaged in transit
+266,5737,2025-11-21,1,damaged in transit
+267,5754,2025-11-07,1,damaged in transit
+268,5790,2025-11-16,1,defective
+269,5793,2025-11-23,1,changed mind
+270,5794,2025-11-10,2,no longer needed
+271,5825,2025-11-19,1,changed mind
+272,5857,2025-11-14,1,defective
+273,5875,2025-12-08,2,wrong item
+274,5902,2025-11-26,2,damaged in transit
+275,5907,2025-11-26,1,defective
+276,5966,2025-11-19,1,no longer needed
+277,5971,2025-11-13,3,defective
+278,5976,2025-12-04,1,defective
+279,5990,2025-12-01,1,changed mind
+280,6021,2025-11-11,2,wrong item
+281,6027,2025-11-23,2,defective
+282,6030,2025-11-25,1,wrong item
+283,6061,2025-11-22,1,wrong item
+284,6073,2025-11-29,1,no longer needed
+285,6080,2025-11-20,1,wrong item
+286,6113,2025-12-08,2,no longer needed
+287,6123,2025-12-01,1,no longer needed
+288,6131,2025-11-20,2,defective
+289,6138,2025-12-01,1,wrong item
+290,6171,2025-11-28,1,wrong item
+291,6174,2025-11-24,1,wrong item
+292,6207,2025-12-05,1,defective
+293,6223,2025-11-09,1,defective
+294,6251,2025-11-15,1,damaged in transit
+295,6266,2025-11-15,1,defective
+296,6268,2025-11-13,1,wrong item
+297,6278,2025-11-24,1,wrong item
+298,6281,2025-11-23,1,changed mind
+299,6286,2025-11-28,1,wrong item
+300,6296,2025-12-09,1,defective
+301,6300,2025-11-26,3,no longer needed
+302,6307,2025-12-06,1,defective
+303,6310,2025-12-03,2,no longer needed
+304,6359,2025-11-22,1,wrong item
+305,6377,2025-11-28,1,damaged in transit
+306,6401,2025-11-13,2,wrong item
+307,6414,2025-11-07,1,wrong item
+308,6425,2025-11-14,2,wrong item
+309,6446,2025-11-27,1,no longer needed
+310,6464,2025-11-27,1,changed mind
+311,6486,2025-11-23,3,defective
+312,6488,2025-11-14,1,defective
+313,6503,2025-11-29,2,no longer needed
+314,6519,2025-11-25,1,defective
+315,6522,2025-11-29,1,defective
+316,6542,2025-11-19,1,wrong item
+317,6571,2025-11-29,2,wrong item
+318,6594,2025-11-15,1,wrong item
+319,6595,2025-12-04,1,no longer needed
+320,6615,2025-11-03,2,changed mind
+321,6654,2025-11-14,1,changed mind
+322,6669,2025-12-06,1,no longer needed
+323,6686,2025-11-23,1,wrong item
+324,6699,2025-11-15,1,no longer needed
+325,6730,2025-11-10,1,wrong item
+326,6748,2025-11-12,1,defective
+327,6752,2025-11-18,3,no longer needed
+328,6761,2025-11-09,1,defective
+329,6775,2025-11-28,1,wrong item
+330,6800,2025-12-02,1,no longer needed
+331,6829,2025-11-23,1,wrong item
+332,6834,2025-11-28,1,damaged in transit
+333,6845,2025-11-12,3,defective
+334,6852,2025-11-18,2,wrong item
+335,6869,2025-11-13,1,defective
+336,6911,2025-11-16,1,no longer needed
+337,6915,2025-11-24,2,defective
+338,6933,2025-11-24,1,defective
+339,6984,2025-12-02,1,no longer needed
+340,7001,2025-12-02,1,damaged in transit
+341,7002,2025-11-22,1,changed mind
+342,7038,2025-11-06,1,no longer needed
+343,7047,2025-11-22,2,changed mind
+344,7095,2025-11-12,1,damaged in transit
+345,7097,2025-11-22,1,defective
+346,7138,2025-12-02,3,wrong item
+347,7196,2025-11-08,2,defective
+348,7225,2025-11-10,2,no longer needed
+349,7230,2025-11-17,1,damaged in transit
+350,7287,2025-11-18,2,changed mind
+351,7305,2025-12-02,1,wrong item
+352,7321,2025-11-28,1,wrong item
+353,7326,2025-12-01,1,damaged in transit
+354,7341,2025-11-25,1,no longer needed
+355,7362,2025-11-27,2,no longer needed
+356,7378,2025-11-22,2,damaged in transit
+357,7385,2025-12-05,1,damaged in transit
+358,7386,2025-11-11,1,damaged in transit
+359,7394,2025-11-14,1,wrong item
+360,7414,2025-11-24,1,defective
+361,7429,2025-11-22,1,damaged in transit
+362,7432,2025-11-12,1,changed mind
+363,7463,2025-11-23,1,damaged in transit
+364,7481,2025-11-11,1,changed mind
+365,7573,2025-11-16,1,wrong item
+366,7601,2025-12-02,1,changed mind
+367,7605,2025-11-14,2,changed mind
+368,7684,2025-11-28,1,damaged in transit
+369,7690,2025-11-10,2,damaged in transit
+370,7727,2025-11-16,2,no longer needed
+371,7738,2025-11-20,1,damaged in transit
+372,7824,2025-12-04,3,no longer needed
+373,7829,2025-11-28,1,defective
+374,7830,2025-12-09,1,defective
+375,7832,2025-11-16,1,no longer needed
+376,7861,2025-12-03,1,no longer needed
+377,7884,2025-11-10,1,wrong item
+378,7890,2025-12-01,1,changed mind
+379,7900,2025-11-24,1,defective
+380,7940,2025-11-17,3,changed mind
+381,7942,2025-11-16,1,defective
+382,7979,2025-12-02,2,changed mind
+383,7981,2025-11-25,1,changed mind
+384,7992,2025-11-20,1,changed mind
+385,8008,2025-12-04,1,defective
+386,8028,2025-11-14,1,changed mind
+387,8058,2025-11-17,1,wrong item
+388,8071,2025-11-28,1,no longer needed
+389,8076,2025-11-12,1,changed mind
+390,8081,2025-12-03,1,no longer needed
+391,8087,2025-11-23,1,damaged in transit
+392,8104,2025-11-14,1,defective
+393,8109,2025-11-13,2,changed mind
+394,8118,2025-12-01,3,no longer needed
+395,8158,2025-11-23,1,wrong item
+396,8231,2025-11-24,3,wrong item
+397,8254,2025-12-13,3,wrong item
+398,8313,2026-01-01,2,damaged in transit
+399,8333,2025-12-04,3,changed mind
+400,8336,2025-12-13,1,defective
+401,8351,2025-12-18,1,wrong item
+402,8362,2025-12-20,1,changed mind
+403,8381,2025-12-09,1,changed mind
+404,8382,2025-12-19,2,no longer needed
+405,8405,2025-12-17,1,wrong item
+406,8408,2025-12-28,1,defective
+407,8459,2026-01-01,1,wrong item
+408,8494,2025-12-28,1,defective
+409,8500,2026-01-03,1,no longer needed
+410,8507,2025-12-15,1,no longer needed
+411,8519,2025-12-12,1,no longer needed
+412,8536,2025-12-18,1,damaged in transit
+413,8544,2025-12-17,1,damaged in transit
+414,8548,2025-12-23,1,damaged in transit
+415,8565,2026-01-04,1,changed mind
+416,8593,2025-12-16,1,damaged in transit
+417,8604,2026-01-03,3,damaged in transit
+418,8612,2025-12-15,1,defective
+419,8619,2025-12-19,1,no longer needed
+420,8623,2025-12-31,1,defective
+421,8625,2025-12-20,1,no longer needed
+422,8645,2025-12-17,1,defective
+423,8696,2025-12-31,3,damaged in transit
+424,8718,2025-12-23,2,no longer needed
+425,8731,2025-12-20,2,wrong item
+426,8742,2025-12-16,1,defective
+427,8751,2025-12-07,1,changed mind
+428,8765,2025-12-24,1,damaged in transit
+429,8771,2025-12-26,1,wrong item
+430,8779,2026-01-03,2,damaged in transit
+431,8813,2025-12-23,1,no longer needed
+432,8835,2025-12-17,3,defective
+433,8859,2025-12-19,1,changed mind
+434,8866,2025-12-21,1,damaged in transit
+435,8871,2025-12-26,1,no longer needed
+436,8894,2025-12-26,1,defective
+437,8905,2025-12-22,3,defective
+438,8908,2025-12-14,1,defective
+439,8934,2025-12-23,2,changed mind
+440,8938,2025-12-30,1,no longer needed
+441,8955,2025-12-14,2,changed mind
+442,8956,2025-12-13,1,no longer needed
+443,9003,2025-12-28,1,defective
+444,9009,2025-12-07,1,damaged in transit
+445,9018,2025-12-28,2,damaged in transit
+446,9041,2025-12-14,1,damaged in transit
+447,9046,2025-12-26,1,damaged in transit
+448,9054,2025-12-30,1,defective
+449,9063,2025-12-28,1,wrong item
+450,9080,2025-12-08,1,damaged in transit
+451,9140,2026-01-01,2,wrong item
+452,9185,2025-12-24,1,wrong item
+453,9196,2026-01-07,1,defective
+454,9211,2025-12-20,1,wrong item
+455,9230,2025-12-13,1,damaged in transit
+456,9245,2026-01-02,1,changed mind
+457,9249,2025-12-25,1,wrong item
+458,9288,2025-12-14,2,defective
+459,9289,2025-12-07,1,changed mind
+460,9291,2025-12-14,1,changed mind
+461,9294,2025-12-10,2,defective
+462,9308,2025-12-25,2,changed mind
+463,9345,2025-12-07,3,changed mind
+464,9353,2026-01-06,2,wrong item
+465,9356,2026-01-09,1,defective
+466,9365,2026-01-04,1,wrong item
+467,9421,2025-12-17,3,wrong item
+468,9458,2025-12-11,1,no longer needed
+469,9469,2025-12-31,2,defective
+470,9500,2025-12-25,1,wrong item
+471,9507,2026-01-03,1,wrong item
+472,9523,2025-12-23,1,changed mind
+473,9531,2025-12-27,1,no longer needed
+474,9566,2025-12-15,1,damaged in transit
+475,9587,2025-12-26,1,damaged in transit
+476,9645,2026-01-03,1,changed mind
+477,9667,2025-12-26,1,changed mind
+478,9686,2026-01-07,1,defective
+479,9736,2025-12-09,2,no longer needed
+480,9748,2025-12-31,1,damaged in transit
+481,9784,2025-12-30,1,changed mind
+482,9828,2025-12-20,2,no longer needed
+483,9882,2025-12-25,1,defective
+484,9934,2025-12-23,3,no longer needed
+485,9935,2025-12-27,1,no longer needed
+486,9944,2025-12-27,1,damaged in transit
+487,9976,2025-12-13,1,no longer needed
+488,9985,2025-12-19,1,changed mind
+489,9996,2026-01-05,1,changed mind
+490,10022,2025-12-16,1,damaged in transit
+491,10033,2025-12-05,1,no longer needed
+492,10052,2025-12-18,1,no longer needed
+493,10064,2026-01-04,1,changed mind
+494,10071,2025-12-12,2,changed mind
+495,10126,2025-12-07,1,no longer needed
+496,10127,2026-01-01,1,changed mind
+497,10145,2025-12-08,1,no longer needed
+498,10170,2025-12-08,1,defective
+499,10186,2025-12-19,1,wrong item
+500,10204,2025-12-06,1,defective
+501,10229,2025-12-10,1,wrong item
+502,10255,2026-01-06,1,no longer needed
+503,10256,2026-01-09,1,no longer needed
+504,10267,2025-12-26,2,changed mind
+505,10300,2025-12-11,2,defective
+506,10330,2025-12-31,1,defective
+507,10364,2025-12-13,3,defective
+508,10392,2025-12-29,2,damaged in transit
+509,10406,2026-01-05,1,no longer needed
+510,10408,2025-12-13,3,no longer needed
+511,10417,2025-12-13,1,defective
+512,10454,2025-12-29,1,damaged in transit
+513,10489,2026-01-01,1,changed mind
+514,10514,2025-12-12,1,wrong item
+515,10546,2025-12-26,1,defective
+516,10579,2025-12-15,1,no longer needed
+517,10580,2025-12-23,2,no longer needed
+518,10603,2026-01-08,1,defective
+519,10619,2026-02-03,1,changed mind
+520,10623,2026-02-01,1,no longer needed
+521,10637,2026-01-20,2,damaged in transit
+522,10664,2026-02-05,1,changed mind
+523,10669,2026-02-02,1,wrong item
+524,10673,2026-01-15,1,damaged in transit
+525,10677,2026-01-11,1,damaged in transit
+526,10683,2026-01-07,2,changed mind
+527,10686,2026-01-18,1,defective
+528,10703,2026-02-06,1,changed mind
+529,10711,2026-01-26,1,changed mind
+530,10712,2026-01-26,2,wrong item
+531,10724,2026-02-01,1,wrong item
+532,10728,2026-01-26,1,wrong item
+533,10731,2026-02-08,1,damaged in transit
+534,10734,2026-01-30,1,no longer needed
+535,10797,2026-01-25,3,no longer needed
+536,10906,2026-01-25,1,damaged in transit
+537,10908,2026-01-09,1,wrong item
+538,10937,2026-01-14,1,damaged in transit
+539,10958,2026-01-12,2,changed mind
+540,10962,2026-01-20,1,changed mind
+541,10967,2026-01-15,3,damaged in transit
+542,10980,2026-01-23,2,wrong item
+543,10981,2026-01-15,1,defective
+544,10998,2026-01-05,1,no longer needed
+545,11020,2026-01-23,1,changed mind
+546,11062,2026-02-04,2,defective
+547,11099,2026-01-21,2,no longer needed
+548,11122,2026-01-18,1,wrong item
+549,11135,2026-01-17,1,damaged in transit
+550,11153,2026-02-10,1,defective
+551,11176,2026-01-30,1,no longer needed
+552,11213,2026-02-01,1,damaged in transit
+553,11242,2026-01-18,2,damaged in transit
+554,11246,2026-01-20,1,wrong item
+555,11252,2026-01-28,1,wrong item
+556,11253,2026-02-02,2,wrong item
+557,11263,2026-01-22,1,no longer needed
+558,11272,2026-01-30,1,damaged in transit
+559,11296,2026-01-11,3,damaged in transit
+560,11342,2026-01-14,1,defective
+561,11348,2026-01-23,1,changed mind
+562,11390,2026-01-20,1,no longer needed
+563,11435,2026-02-05,1,changed mind
+564,11449,2026-01-10,1,no longer needed
+565,11483,2026-02-04,2,defective
+566,11509,2026-01-25,1,defective
+567,11577,2026-01-22,3,wrong item
+568,11593,2026-01-11,3,changed mind
+569,11672,2026-01-27,1,changed mind
+570,11705,2026-01-28,1,wrong item
+571,11710,2026-01-29,1,defective
+572,11716,2026-02-01,1,changed mind
+573,11739,2026-01-18,3,defective
+574,11743,2026-01-12,1,wrong item
+575,11768,2026-01-21,1,no longer needed
+576,11828,2026-02-08,1,wrong item
+577,11893,2026-01-29,1,wrong item
+578,11912,2026-02-06,1,changed mind
+579,11928,2026-01-17,1,defective
+580,11957,2026-01-24,1,wrong item
+581,11958,2026-01-19,1,defective
+582,11976,2026-01-14,2,no longer needed
+583,11978,2026-01-11,2,wrong item
+584,11992,2026-02-01,2,damaged in transit
+585,12002,2026-02-04,1,changed mind
+586,12004,2026-01-07,1,changed mind
+587,12011,2026-01-06,1,defective
+588,12027,2026-01-06,1,changed mind
+589,12068,2026-01-14,1,changed mind
+590,12119,2026-02-04,1,no longer needed
+591,12123,2026-02-04,1,no longer needed
+592,12130,2026-01-24,3,wrong item
+593,12135,2026-01-26,1,damaged in transit
+594,12148,2026-01-21,2,no longer needed
+595,12191,2026-01-26,3,no longer needed
+596,12206,2026-01-08,1,damaged in transit
+597,12221,2026-01-11,1,no longer needed
+598,12225,2026-01-11,1,changed mind
+599,12240,2026-01-28,1,damaged in transit
+600,12268,2026-01-11,1,wrong item
+601,12275,2026-01-28,1,damaged in transit
+602,12294,2026-01-20,3,defective
+603,12298,2026-02-05,1,no longer needed
+604,12301,2026-01-30,1,no longer needed
+605,12305,2026-01-25,1,changed mind
+606,12334,2026-01-19,1,no longer needed
+607,12340,2026-01-11,3,damaged in transit
+608,12365,2026-01-26,2,defective
+609,12396,2026-01-25,1,no longer needed
+610,12416,2026-02-02,2,damaged in transit
+611,12426,2026-02-03,1,defective
+612,12431,2026-01-05,1,no longer needed
+613,12446,2026-02-03,1,wrong item
+614,12461,2026-01-31,1,no longer needed
+615,12463,2026-02-05,1,changed mind
+616,12474,2026-01-22,1,changed mind
+617,12475,2026-01-24,1,wrong item
+618,12512,2026-01-07,1,wrong item
+619,12519,2026-01-13,3,wrong item
+620,12527,2026-01-22,1,damaged in transit
+621,12548,2026-01-25,1,defective
+622,12558,2026-01-10,1,no longer needed
+623,12573,2026-01-23,1,damaged in transit
+624,12587,2026-01-19,1,wrong item
+625,12606,2026-01-09,2,wrong item
+626,12631,2026-01-19,2,wrong item
+627,12685,2026-01-28,1,no longer needed
+628,12721,2026-02-17,3,changed mind
+629,12730,2026-03-03,1,wrong item
+630,12732,2026-03-10,1,wrong item
+631,12742,2026-02-15,1,no longer needed
+632,12771,2026-02-10,1,defective
+633,12785,2026-03-07,2,wrong item
+634,12801,2026-02-13,2,wrong item
+635,12822,2026-03-02,2,changed mind
+636,12823,2026-02-25,2,wrong item
+637,12847,2026-02-18,2,no longer needed
+638,12862,2026-02-16,1,no longer needed
+639,12868,2026-02-26,1,no longer needed
+640,12870,2026-02-22,1,defective
+641,12885,2026-02-14,2,wrong item
+642,12928,2026-02-16,2,changed mind
+643,12932,2026-02-23,1,no longer needed
+644,12965,2026-02-17,1,no longer needed
+645,12970,2026-03-05,1,wrong item
+646,13033,2026-02-06,1,changed mind
+647,13077,2026-03-03,1,no longer needed
+648,13114,2026-03-08,1,damaged in transit
+649,13140,2026-02-15,1,defective
+650,13181,2026-03-02,1,changed mind
+651,13193,2026-02-25,1,wrong item
+652,13197,2026-02-12,1,wrong item
+653,13204,2026-02-17,3,damaged in transit
+654,13209,2026-02-11,2,defective
+655,13211,2026-03-03,1,damaged in transit
+656,13220,2026-02-15,1,wrong item
+657,13235,2026-02-10,3,no longer needed
+658,13240,2026-02-17,1,damaged in transit
+659,13244,2026-02-11,1,damaged in transit
+660,13270,2026-02-23,3,wrong item
+661,13278,2026-02-11,2,changed mind
+662,13299,2026-02-17,1,wrong item
+663,13331,2026-02-23,1,changed mind
+664,13372,2026-03-01,2,defective
+665,13382,2026-02-14,2,changed mind
+666,13408,2026-03-03,1,defective
+667,13416,2026-03-03,1,defective
+668,13440,2026-02-13,2,changed mind
+669,13448,2026-02-23,1,wrong item
+670,13478,2026-03-08,1,defective
+671,13486,2026-02-20,1,defective
+672,13504,2026-02-15,1,damaged in transit
+673,13523,2026-03-08,1,wrong item
+674,13527,2026-02-07,1,damaged in transit
+675,13547,2026-03-01,1,changed mind
+676,13557,2026-03-03,1,no longer needed
+677,13572,2026-03-02,3,changed mind
+678,13618,2026-02-14,2,wrong item
+679,13656,2026-03-02,1,no longer needed
+680,13680,2026-02-23,1,changed mind
+681,13732,2026-02-18,1,wrong item
+682,13741,2026-03-07,3,damaged in transit
+683,13764,2026-02-11,1,wrong item
+684,13846,2026-02-10,2,changed mind
+685,13850,2026-03-07,2,defective
+686,13860,2026-02-17,1,changed mind
+687,13865,2026-02-18,1,defective
+688,13949,2026-03-09,1,changed mind
+689,14037,2026-03-01,1,wrong item
+690,14067,2026-03-05,1,no longer needed
+691,14080,2026-02-19,1,no longer needed
+692,14100,2026-02-19,1,changed mind
+693,14127,2026-02-13,1,defective
+694,14142,2026-02-13,2,changed mind
+695,14154,2026-02-17,1,changed mind
+696,14170,2026-02-16,1,no longer needed
+697,14180,2026-02-11,2,changed mind
+698,14189,2026-02-09,1,wrong item
+699,14208,2026-02-05,1,defective
+700,14235,2026-02-17,1,damaged in transit
+701,14246,2026-02-26,2,no longer needed
+702,14320,2026-02-28,1,damaged in transit
+703,14331,2026-02-08,1,defective
+704,14341,2026-02-05,1,damaged in transit
+705,14364,2026-02-06,1,damaged in transit
+706,14379,2026-02-27,3,no longer needed
+707,14387,2026-02-25,2,wrong item
+708,14390,2026-02-20,1,damaged in transit
+709,14398,2026-02-17,1,wrong item
+710,14406,2026-03-08,2,wrong item
+711,14436,2026-02-27,1,no longer needed
+712,14446,2026-02-22,1,wrong item
+713,14463,2026-03-02,1,defective
+714,14512,2026-02-17,1,wrong item
+715,14541,2026-02-14,1,no longer needed
+716,14584,2026-02-10,1,damaged in transit
+717,14611,2026-02-19,1,defective
+718,14676,2026-02-11,1,changed mind
+719,14686,2026-02-14,1,changed mind
+720,14695,2026-02-12,1,damaged in transit
+721,14731,2026-02-15,2,wrong item
+722,14766,2026-02-23,1,no longer needed
+723,14771,2026-02-25,3,changed mind
+724,14779,2026-02-24,1,no longer needed
+725,14783,2026-03-03,3,wrong item
+726,14820,2026-02-15,1,changed mind
+727,14839,2026-02-27,2,changed mind
+728,14850,2026-03-01,1,defective
+729,14852,2026-02-18,2,changed mind
+730,14905,2026-03-20,1,damaged in transit
+731,14909,2026-03-31,1,defective
+732,14930,2026-03-25,3,no longer needed
+733,14935,2026-03-09,2,no longer needed
+734,14962,2026-03-12,2,damaged in transit
+735,14979,2026-03-20,2,wrong item
+736,15066,2026-03-28,1,damaged in transit
+737,15068,2026-03-14,1,defective
+738,15110,2026-04-05,2,defective
+739,15117,2026-03-26,1,no longer needed
+740,15141,2026-04-01,1,changed mind
+741,15151,2026-03-23,1,changed mind
+742,15184,2026-04-03,1,defective
+743,15191,2026-03-15,1,no longer needed
+744,15212,2026-03-08,2,damaged in transit
+745,15216,2026-03-24,1,wrong item
+746,15261,2026-03-08,1,changed mind
+747,15281,2026-03-20,2,no longer needed
+748,15348,2026-03-31,2,changed mind
+749,15369,2026-03-12,2,no longer needed
+750,15371,2026-04-03,1,changed mind
+751,15441,2026-03-04,1,no longer needed
+752,15453,2026-03-17,1,changed mind
+753,15457,2026-03-11,2,wrong item
+754,15473,2026-03-13,2,changed mind
+755,15487,2026-03-10,1,damaged in transit
+756,15498,2026-03-26,1,changed mind
+757,15499,2026-03-31,2,changed mind
+758,15510,2026-04-03,1,no longer needed
+759,15517,2026-03-26,1,damaged in transit
+760,15548,2026-03-16,1,damaged in transit
+761,15550,2026-04-07,3,wrong item
+762,15569,2026-03-31,1,wrong item
+763,15588,2026-04-02,1,no longer needed
+764,15636,2026-03-31,1,wrong item
+765,15651,2026-03-23,1,no longer needed
+766,15737,2026-03-30,1,wrong item
+767,15746,2026-03-04,1,wrong item
+768,15764,2026-03-20,2,changed mind
+769,15766,2026-03-04,1,no longer needed
+770,15779,2026-04-06,2,wrong item
+771,15789,2026-04-06,1,damaged in transit
+772,15809,2026-04-02,3,defective
+773,15814,2026-03-24,1,changed mind
+774,15823,2026-03-13,1,wrong item
+775,15837,2026-04-04,2,defective
+776,15865,2026-03-24,1,defective
+777,15869,2026-03-21,3,wrong item
+778,15886,2026-04-02,1,no longer needed
+779,15894,2026-03-06,3,wrong item
+780,15902,2026-03-08,1,changed mind
+781,15936,2026-03-10,1,damaged in transit
+782,15942,2026-03-10,1,defective
+783,15946,2026-03-25,1,defective
+784,16000,2026-03-12,2,no longer needed
+785,16011,2026-03-11,2,damaged in transit
+786,16022,2026-03-24,1,no longer needed
+787,16026,2026-03-10,1,defective
+788,16028,2026-03-27,3,damaged in transit
+789,16033,2026-03-13,3,damaged in transit
+790,16068,2026-03-13,1,changed mind
+791,16070,2026-03-11,1,defective
+792,16078,2026-04-07,1,damaged in transit
+793,16080,2026-03-15,1,defective
+794,16096,2026-03-28,1,damaged in transit
+795,16123,2026-03-07,1,changed mind
+796,16125,2026-03-09,3,no longer needed
+797,16129,2026-03-29,1,defective
+798,16139,2026-03-26,1,changed mind
+799,16143,2026-03-31,1,no longer needed
+800,16180,2026-04-05,1,changed mind
+801,16233,2026-03-15,1,no longer needed
+802,16319,2026-03-22,1,defective
+803,16330,2026-03-23,1,wrong item
+804,16334,2026-03-28,1,damaged in transit
+805,16344,2026-04-04,2,no longer needed
+806,16346,2026-03-16,1,damaged in transit
+807,16356,2026-03-13,1,damaged in transit
+808,16386,2026-04-08,1,defective
+809,16394,2026-03-23,2,no longer needed
+810,16425,2026-03-27,1,no longer needed
+811,16449,2026-03-10,1,defective
+812,16457,2026-03-16,2,changed mind
+813,16465,2026-03-10,2,wrong item
+814,16471,2026-03-29,1,defective
+815,16480,2026-03-14,1,wrong item
+816,16481,2026-03-10,1,no longer needed
+817,16522,2026-03-27,2,changed mind
+818,16542,2026-03-22,2,damaged in transit
+819,16544,2026-03-20,2,no longer needed
+820,16546,2026-04-02,3,damaged in transit
+821,16572,2026-03-15,1,defective
+822,16577,2026-03-13,2,defective
+823,16684,2026-04-02,3,defective
+824,16693,2026-03-30,1,damaged in transit
+825,16730,2026-03-18,1,changed mind
+826,16742,2026-03-20,2,changed mind
+827,16782,2026-03-26,1,damaged in transit
+828,16808,2026-03-27,3,damaged in transit
+829,16816,2026-03-28,1,changed mind
+830,16858,2026-03-25,1,changed mind
+831,16871,2026-03-31,1,changed mind
+832,16887,2026-03-16,1,defective
+833,16914,2026-03-19,1,wrong item
+834,16940,2026-03-21,3,damaged in transit
+835,16970,2026-04-01,2,damaged in transit
+836,16995,2026-04-24,1,changed mind
+837,17004,2026-04-22,1,no longer needed
+838,17025,2026-04-26,1,wrong item
+839,17032,2026-04-14,1,damaged in transit
+840,17072,2026-04-18,1,damaged in transit
+841,17127,2026-05-03,1,defective
+842,17166,2026-04-10,2,no longer needed
+843,17183,2026-04-28,1,wrong item
+844,17207,2026-04-07,1,changed mind
+845,17234,2026-04-16,2,defective
+846,17235,2026-04-27,1,damaged in transit
+847,17260,2026-04-25,1,defective
+848,17273,2026-04-26,1,no longer needed
+849,17294,2026-05-01,1,no longer needed
+850,17313,2026-04-17,1,no longer needed
+851,17344,2026-04-22,1,wrong item
+852,17349,2026-05-08,1,no longer needed
+853,17373,2026-04-09,1,changed mind
+854,17379,2026-04-12,1,no longer needed
+855,17387,2026-04-05,1,damaged in transit
+856,17406,2026-04-17,2,damaged in transit
+857,17417,2026-04-15,1,damaged in transit
+858,17438,2026-04-25,1,damaged in transit
+859,17454,2026-05-03,2,wrong item
+860,17459,2026-04-18,1,wrong item
+861,17469,2026-04-24,1,no longer needed
+862,17548,2026-04-28,2,damaged in transit
+863,17603,2026-04-14,1,wrong item
+864,17640,2026-04-10,1,no longer needed
+865,17643,2026-04-29,2,wrong item
+866,17652,2026-04-16,1,wrong item
+867,17665,2026-04-20,2,wrong item
+868,17683,2026-04-08,1,damaged in transit
+869,17684,2026-05-04,2,defective
+870,17697,2026-04-07,1,defective
+871,17707,2026-04-10,1,damaged in transit
+872,17710,2026-04-20,1,damaged in transit
+873,17742,2026-04-27,1,changed mind
+874,17755,2026-04-27,1,damaged in transit
+875,17765,2026-04-28,1,damaged in transit
+876,17803,2026-04-29,1,no longer needed
+877,17829,2026-04-13,1,wrong item
+878,17832,2026-04-22,1,wrong item
+879,17880,2026-04-15,1,defective
+880,17886,2026-04-11,1,changed mind
+881,17887,2026-05-01,1,damaged in transit
+882,17901,2026-04-20,2,wrong item
+883,17957,2026-04-10,1,no longer needed
+884,17986,2026-04-28,3,changed mind
+885,18033,2026-05-08,3,changed mind
+886,18052,2026-04-16,1,wrong item
+887,18073,2026-04-04,1,wrong item
+888,18079,2026-04-27,1,changed mind
+889,18086,2026-05-03,1,defective
+890,18115,2026-04-12,3,wrong item
+891,18139,2026-04-30,1,no longer needed
+892,18180,2026-05-01,3,changed mind
+893,18223,2026-04-09,2,damaged in transit
+894,18225,2026-04-07,1,defective
+895,18230,2026-05-01,1,wrong item
+896,18269,2026-04-30,1,defective
+897,18270,2026-04-21,1,wrong item
+898,18285,2026-05-03,1,changed mind
+899,18312,2026-04-30,2,changed mind
+900,18378,2026-04-16,1,changed mind
+901,18392,2026-04-19,1,damaged in transit
+902,18406,2026-04-25,1,no longer needed
+903,18429,2026-04-22,2,wrong item
+904,18447,2026-04-17,1,wrong item
+905,18463,2026-04-20,1,wrong item
+906,18467,2026-04-11,1,no longer needed
+907,18498,2026-04-21,2,defective
+908,18539,2026-04-17,1,no longer needed
+909,18547,2026-04-18,2,damaged in transit
+910,18548,2026-04-11,1,changed mind
+911,18551,2026-04-04,1,wrong item
+912,18576,2026-04-27,1,wrong item
+913,18584,2026-05-05,1,defective
+914,18587,2026-04-19,1,no longer needed
+915,18616,2026-04-23,1,defective
+916,18631,2026-04-06,2,changed mind
+917,18651,2026-05-04,1,no longer needed
+918,18669,2026-05-04,3,defective
+919,18711,2026-04-15,1,defective
+920,18728,2026-04-16,1,changed mind
+921,18734,2026-04-08,1,defective
+922,18825,2026-05-08,1,defective
+923,18871,2026-04-21,1,no longer needed
+924,18881,2026-05-08,1,wrong item
+925,18885,2026-04-26,1,changed mind
+926,18963,2026-04-25,1,defective
+927,18975,2026-04-25,3,damaged in transit
+928,18984,2026-04-22,3,wrong item
+929,18994,2026-04-16,3,damaged in transit
+930,19015,2026-05-09,1,wrong item
+931,19034,2026-05-07,2,defective
+932,19036,2026-04-14,1,changed mind
+933,19039,2026-04-16,2,wrong item
+934,19081,2026-04-19,1,wrong item
+935,19088,2026-04-12,2,wrong item
+936,19095,2026-04-22,1,damaged in transit
+937,19114,2026-05-03,1,no longer needed
+938,19135,2026-04-21,1,changed mind
+939,19163,2026-04-30,1,changed mind
+940,19183,2026-05-11,1,defective
+941,19206,2026-05-08,1,damaged in transit
+942,19237,2026-06-01,1,no longer needed
+943,19275,2026-05-19,1,damaged in transit
+944,19278,2026-06-04,1,no longer needed
+945,19290,2026-05-12,1,damaged in transit
+946,19293,2026-05-18,1,wrong item
+947,19303,2026-05-11,1,defective
+948,19348,2026-05-24,3,changed mind
+949,19352,2026-05-21,1,damaged in transit
+950,19368,2026-05-17,1,no longer needed
+951,19378,2026-06-02,1,changed mind
+952,19391,2026-05-16,1,changed mind
+953,19406,2026-05-21,1,defective
+954,19410,2026-05-21,1,damaged in transit
+955,19510,2026-05-10,2,no longer needed
+956,19539,2026-05-12,1,no longer needed
+957,19567,2026-05-13,1,changed mind
+958,19582,2026-05-18,1,changed mind
+959,19660,2026-05-16,1,no longer needed
+960,19686,2026-05-19,1,defective
+961,19688,2026-05-16,2,defective
+962,19708,2026-06-03,1,no longer needed
+963,19749,2026-05-10,2,changed mind
+964,19760,2026-05-05,3,damaged in transit
+965,19772,2026-05-19,1,no longer needed
+966,19792,2026-05-26,1,wrong item
+967,19801,2026-05-19,2,damaged in transit
+968,19859,2026-05-22,3,no longer needed
+969,19862,2026-05-09,1,changed mind
+970,19864,2026-05-14,1,no longer needed
+971,19874,2026-05-08,1,no longer needed
+972,19877,2026-05-22,3,no longer needed
+973,19881,2026-05-21,1,changed mind
+974,19952,2026-06-03,1,no longer needed
+975,19953,2026-06-07,1,changed mind
+976,19964,2026-05-23,1,no longer needed
+977,19968,2026-05-08,1,no longer needed
+978,20011,2026-05-18,2,changed mind
+979,20012,2026-05-16,1,damaged in transit
+980,20027,2026-05-20,2,defective
+981,20034,2026-05-11,1,defective
+982,20041,2026-05-05,2,changed mind
+983,20043,2026-05-19,1,changed mind
+984,20129,2026-05-16,1,changed mind
+985,20152,2026-05-29,1,wrong item
+986,20191,2026-05-28,2,damaged in transit
+987,20192,2026-05-17,1,changed mind
+988,20247,2026-06-02,1,defective
+989,20290,2026-05-24,2,damaged in transit
+990,20315,2026-06-03,1,no longer needed
+991,20382,2026-05-16,2,damaged in transit
+992,20424,2026-05-17,1,damaged in transit
+993,20438,2026-06-08,1,changed mind
+994,20458,2026-05-16,2,no longer needed
+995,20484,2026-06-01,1,wrong item
+996,20493,2026-05-22,1,no longer needed
+997,20510,2026-05-28,1,wrong item
+998,20519,2026-06-01,1,damaged in transit
+999,20531,2026-05-16,2,changed mind
+1000,20551,2026-05-28,1,wrong item
+1001,20558,2026-05-06,1,damaged in transit
+1002,20564,2026-05-22,2,wrong item
+1003,20584,2026-05-21,1,damaged in transit
+1004,20603,2026-05-09,1,no longer needed
+1005,20664,2026-05-28,1,changed mind
+1006,20678,2026-06-01,1,wrong item
+1007,20708,2026-06-01,1,damaged in transit
+1008,20774,2026-06-02,1,defective
+1009,20780,2026-05-07,1,changed mind
+1010,20800,2026-06-07,1,no longer needed
+1011,20807,2026-05-25,1,no longer needed
+1012,20839,2026-05-31,1,damaged in transit
+1013,20844,2026-05-14,1,damaged in transit
+1014,20846,2026-05-28,1,changed mind
+1015,20856,2026-06-04,1,changed mind
+1016,20908,2026-05-20,1,no longer needed
+1017,20917,2026-06-02,1,defective
+1018,20974,2026-05-18,2,damaged in transit
+1019,20986,2026-06-08,1,defective
+1020,20997,2026-05-14,2,defective
+1021,21000,2026-05-18,1,damaged in transit
+1022,21047,2026-05-17,1,wrong item
+1023,21071,2026-05-19,1,defective
+1024,21081,2026-05-08,1,damaged in transit
+1025,21118,2026-05-22,1,wrong item
+1026,21119,2026-05-09,1,no longer needed
+1027,21160,2026-06-03,2,wrong item
+1028,21218,2026-06-05,1,defective
+1029,21279,2026-05-16,1,wrong item
+1030,21282,2026-05-30,1,no longer needed
+1031,21295,2026-05-29,2,changed mind
+1032,21303,2026-06-07,1,damaged in transit
+1033,21325,2026-06-16,1,changed mind
+1034,21348,2026-06-03,2,damaged in transit
+1035,21370,2026-06-23,3,changed mind
+1036,21375,2026-06-26,1,defective
+1037,21409,2026-06-15,3,wrong item
+1038,21410,2026-06-11,1,wrong item
+1039,21434,2026-06-17,1,defective
+1040,21444,2026-06-19,1,wrong item
+1041,21447,2026-06-12,1,no longer needed
+1042,21453,2026-06-08,1,damaged in transit
+1043,21466,2026-06-20,1,wrong item
+1044,21519,2026-06-10,2,defective
+1045,21531,2026-07-02,1,wrong item
+1046,21544,2026-06-11,1,changed mind
+1047,21565,2026-07-05,1,no longer needed
+1048,21570,2026-06-05,2,wrong item
+1049,21584,2026-06-26,2,defective
+1050,21620,2026-07-04,2,defective
+1051,21622,2026-06-19,3,defective
+1052,21625,2026-06-05,1,defective
+1053,21638,2026-07-01,1,wrong item
+1054,21680,2026-06-09,1,changed mind
+1055,21710,2026-06-21,2,no longer needed
+1056,21731,2026-06-18,1,wrong item
+1057,21747,2026-06-18,3,damaged in transit
+1058,21777,2026-06-21,1,changed mind
+1059,21838,2026-06-20,1,defective
+1060,21847,2026-06-07,1,wrong item
+1061,21860,2026-06-19,1,no longer needed
+1062,21863,2026-07-01,1,damaged in transit
+1063,21899,2026-06-30,2,damaged in transit
+1064,21914,2026-06-23,2,damaged in transit
+1065,21919,2026-07-04,1,changed mind
+1066,21991,2026-06-12,1,damaged in transit
+1067,22002,2026-06-23,1,defective
+1068,22045,2026-06-14,1,no longer needed
+1069,22068,2026-06-11,1,no longer needed
+1070,22126,2026-06-15,1,changed mind
+1071,22127,2026-06-11,1,no longer needed
+1072,22141,2026-06-08,1,wrong item
+1073,22148,2026-07-05,1,no longer needed
+1074,22154,2026-07-10,2,changed mind
+1075,22238,2026-06-26,1,defective
+1076,22248,2026-06-25,2,changed mind
+1077,22249,2026-06-26,1,damaged in transit
+1078,22250,2026-06-13,1,defective
+1079,22275,2026-07-02,1,defective
+1080,22277,2026-06-17,1,no longer needed
+1081,22293,2026-06-14,1,wrong item
+1082,22316,2026-06-16,1,defective
+1083,22323,2026-07-03,1,no longer needed
+1084,22338,2026-06-17,1,defective
+1085,22352,2026-06-30,1,wrong item
+1086,22353,2026-06-27,1,defective
+1087,22360,2026-06-21,2,no longer needed
+1088,22381,2026-06-16,1,damaged in transit
+1089,22399,2026-06-24,2,defective
+1090,22471,2026-06-18,3,no longer needed
+1091,22493,2026-06-23,1,damaged in transit
+1092,22524,2026-06-21,1,wrong item
+1093,22540,2026-06-19,3,changed mind
+1094,22600,2026-06-14,1,damaged in transit
+1095,22628,2026-06-29,1,damaged in transit
+1096,22649,2026-06-28,3,no longer needed
+1097,22673,2026-06-18,1,wrong item
+1098,22676,2026-06-11,1,no longer needed
+1099,22736,2026-06-14,1,defective
+1100,22777,2026-07-06,2,no longer needed
+1101,22783,2026-06-27,1,no longer needed
+1102,22788,2026-06-30,1,no longer needed
+1103,22790,2026-06-24,1,changed mind
+1104,22792,2026-06-18,1,defective
+1105,22813,2026-06-25,3,wrong item
+1106,22824,2026-06-30,1,no longer needed
+1107,22826,2026-06-25,2,wrong item
+1108,22845,2026-06-18,1,changed mind
+1109,22846,2026-06-27,1,damaged in transit
+1110,22887,2026-06-14,1,no longer needed
+1111,22895,2026-06-25,1,no longer needed
+1112,22924,2026-07-04,1,no longer needed
+1113,22998,2026-06-18,2,defective
+1114,23016,2026-06-10,1,changed mind
+1115,23025,2026-06-25,2,changed mind
+1116,23042,2026-06-23,1,wrong item
+1117,23044,2026-06-14,2,changed mind
+1118,23063,2026-06-24,2,damaged in transit
+1119,23085,2026-06-16,1,changed mind
+1120,23168,2026-06-11,1,wrong item
+1121,23174,2026-06-13,1,changed mind
+1122,23207,2026-06-24,2,changed mind
+1123,23260,2026-06-10,1,no longer needed
+1124,23263,2026-07-02,1,changed mind
+1125,23264,2026-07-03,1,wrong item
+1126,23267,2026-06-23,1,no longer needed
+1127,23273,2026-06-17,1,defective
+1128,23297,2026-07-05,1,no longer needed
+1129,23302,2026-07-05,1,no longer needed
+1130,23308,2026-06-29,2,no longer needed
+1131,23320,2026-06-23,1,defective
+1132,23395,2026-06-28,1,no longer needed
+1133,23401,2026-06-07,3,no longer needed
+1134,23420,2026-06-23,3,changed mind
+1135,23434,2026-06-29,1,damaged in transit
+1136,23437,2026-07-05,1,no longer needed
+1137,23439,2026-07-27,2,wrong item
+1138,23461,2026-07-30,1,defective
+1139,23462,2026-07-09,3,changed mind
+1140,23541,2026-07-07,2,damaged in transit
+1141,23552,2026-07-21,2,defective
+1142,23557,2026-07-12,1,no longer needed
+1143,23569,2026-07-24,2,no longer needed
+1144,23587,2026-07-22,1,wrong item
+1145,23637,2026-07-10,3,defective
+1146,23672,2026-07-21,2,defective
+1147,23673,2026-08-03,1,defective
+1148,23680,2026-07-28,3,damaged in transit
+1149,23684,2026-07-10,2,no longer needed
+1150,23705,2026-07-23,3,defective
+1151,23713,2026-07-29,1,wrong item
+1152,23722,2026-07-28,1,damaged in transit
+1153,23742,2026-07-17,1,wrong item
+1154,23751,2026-08-07,2,defective
+1155,23768,2026-07-26,2,defective
+1156,23780,2026-07-12,3,damaged in transit
+1157,23816,2026-08-02,1,no longer needed
+1158,23820,2026-08-01,1,no longer needed
+1159,23851,2026-07-20,1,damaged in transit
+1160,23871,2026-07-26,1,wrong item
+1161,23931,2026-07-22,3,no longer needed
+1162,23971,2026-07-13,1,wrong item
+1163,23978,2026-07-21,2,defective
+1164,23986,2026-07-04,1,defective
+1165,23995,2026-07-18,3,no longer needed
+1166,24030,2026-07-28,2,changed mind
+1167,24035,2026-08-06,2,no longer needed
+1168,24056,2026-07-15,1,damaged in transit
+1169,24061,2026-07-14,3,defective
+1170,24068,2026-07-13,1,changed mind
+1171,24097,2026-07-05,1,changed mind
+1172,24106,2026-08-07,2,wrong item
+1173,24107,2026-07-18,1,wrong item
+1174,24131,2026-08-01,1,damaged in transit
+1175,24146,2026-08-02,1,defective
+1176,24148,2026-07-16,2,wrong item
+1177,24159,2026-08-02,1,wrong item
+1178,24162,2026-07-21,1,changed mind
+1179,24167,2026-08-02,1,damaged in transit
+1180,24188,2026-07-31,1,wrong item
+1181,24240,2026-08-05,1,no longer needed
+1182,24268,2026-08-02,2,wrong item
+1183,24328,2026-07-25,1,wrong item
+1184,24338,2026-08-06,1,no longer needed
+1185,24413,2026-07-21,3,damaged in transit
+1186,24447,2026-08-03,1,damaged in transit
+1187,24498,2026-07-18,1,wrong item
+1188,24501,2026-07-26,1,defective
+1189,24531,2026-07-13,1,damaged in transit
+1190,24554,2026-07-07,1,no longer needed
+1191,24556,2026-07-29,1,no longer needed
+1192,24557,2026-07-09,3,wrong item
+1193,24561,2026-08-03,1,wrong item
+1194,24564,2026-07-31,1,damaged in transit
+1195,24602,2026-07-14,1,changed mind
+1196,24628,2026-08-02,1,wrong item
+1197,24742,2026-07-08,1,no longer needed
+1198,24749,2026-08-04,1,defective
+1199,24770,2026-07-30,2,no longer needed
+1200,24807,2026-08-05,1,wrong item
+1201,24830,2026-07-18,1,changed mind
+1202,24841,2026-07-16,2,no longer needed
+1203,24846,2026-07-25,2,wrong item
+1204,24891,2026-07-16,2,changed mind
+1205,24894,2026-07-23,2,wrong item
+1206,24910,2026-07-27,1,no longer needed
+1207,24918,2026-07-27,1,no longer needed
+1208,24919,2026-07-25,1,changed mind
+1209,24931,2026-07-09,1,damaged in transit
+1210,24957,2026-07-27,3,wrong item
+1211,24997,2026-08-07,1,no longer needed
+1212,25054,2026-07-25,1,wrong item
+1213,25075,2026-07-10,3,changed mind
+1214,25100,2026-07-26,1,wrong item
+1215,25104,2026-08-05,1,wrong item
+1216,25130,2026-07-24,1,no longer needed
+1217,25137,2026-07-19,2,defective
+1218,25144,2026-07-23,3,defective
+1219,25150,2026-07-25,1,damaged in transit
+1220,25171,2026-07-19,2,wrong item
+1221,25191,2026-07-28,1,wrong item
+1222,25213,2026-07-07,2,no longer needed
+1223,25214,2026-07-29,2,defective
+1224,25236,2026-07-14,1,wrong item
+1225,25242,2026-08-01,2,no longer needed
+1226,25246,2026-07-22,1,wrong item
+1227,25247,2026-07-17,2,damaged in transit
+1228,25251,2026-07-17,2,changed mind
+1229,25263,2026-07-09,2,changed mind
+1230,25331,2026-07-24,1,no longer needed
+1231,25363,2026-07-05,1,changed mind
+1232,25368,2026-07-13,2,wrong item
+1233,25383,2026-07-13,2,damaged in transit
+1234,25388,2026-07-16,2,wrong item
+1235,25401,2026-07-15,2,no longer needed
+1236,25411,2026-07-08,1,damaged in transit
+1237,25423,2026-07-08,1,defective
+1238,25425,2026-07-22,1,defective
+1239,25440,2026-07-23,1,damaged in transit
+1240,25445,2026-07-18,1,changed mind
+1241,25469,2026-07-14,1,defective
+1242,25489,2026-07-23,2,defective
+1243,25497,2026-07-10,1,damaged in transit
+1244,25501,2026-07-29,1,defective
+1245,25518,2026-07-09,1,damaged in transit
+1246,25521,2026-07-18,2,no longer needed
+1247,25570,2026-07-24,1,damaged in transit
+1248,25580,2026-09-06,1,defective
+1249,25593,2026-09-05,2,defective
+1250,25677,2026-08-20,3,wrong item
+1251,25681,2026-08-04,1,wrong item
+1252,25683,2026-08-27,1,damaged in transit
+1253,25701,2026-08-11,2,damaged in transit
+1254,25726,2026-09-08,1,no longer needed
+1255,25799,2026-08-14,1,damaged in transit
+1256,25804,2026-08-08,2,wrong item
+1257,25812,2026-08-20,1,defective
+1258,25825,2026-08-25,1,defective
+1259,25874,2026-09-01,2,no longer needed
+1260,25902,2026-08-25,1,wrong item
+1261,25914,2026-08-09,1,changed mind
+1262,25936,2026-08-10,3,defective
+1263,25956,2026-08-06,1,damaged in transit
+1264,25964,2026-08-26,1,damaged in transit
+1265,25969,2026-08-31,1,changed mind
+1266,25971,2026-08-24,1,no longer needed
+1267,25997,2026-08-10,1,changed mind
+1268,26037,2026-08-29,3,no longer needed
+1269,26050,2026-09-05,1,no longer needed
+1270,26079,2026-08-10,2,no longer needed
+1271,26089,2026-08-31,2,changed mind
+1272,26102,2026-08-17,3,wrong item
+1273,26113,2026-09-07,3,defective
+1274,26120,2026-08-14,1,defective
+1275,26130,2026-08-26,1,no longer needed
+1276,26142,2026-08-31,1,changed mind
+1277,26186,2026-08-31,1,no longer needed
+1278,26233,2026-08-13,1,no longer needed
+1279,26257,2026-08-24,2,damaged in transit
+1280,26278,2026-08-06,2,defective
+1281,26294,2026-09-01,2,defective
+1282,26308,2026-08-18,1,no longer needed
+1283,26335,2026-08-24,1,defective
+1284,26347,2026-08-18,1,no longer needed
+1285,26375,2026-08-29,2,damaged in transit
+1286,26376,2026-08-25,3,damaged in transit
+1287,26379,2026-08-25,1,wrong item
+1288,26391,2026-08-20,3,damaged in transit
+1289,26398,2026-08-16,1,defective
+1290,26423,2026-09-01,1,wrong item
+1291,26428,2026-08-15,1,changed mind
+1292,26436,2026-08-23,1,wrong item
+1293,26452,2026-08-08,2,no longer needed
+1294,26471,2026-08-18,2,damaged in transit
+1295,26479,2026-08-23,2,wrong item
+1296,26481,2026-08-26,1,no longer needed
+1297,26503,2026-08-15,1,changed mind
+1298,26569,2026-08-06,2,damaged in transit
+1299,26590,2026-09-04,2,changed mind
+1300,26594,2026-08-31,1,damaged in transit
+1301,26595,2026-08-08,1,damaged in transit
+1302,26620,2026-08-17,1,no longer needed
+1303,26667,2026-08-12,2,wrong item
+1304,26670,2026-08-18,1,no longer needed
+1305,26680,2026-08-11,1,wrong item
+1306,26702,2026-09-02,1,changed mind
+1307,26707,2026-09-03,1,defective
+1308,26747,2026-08-23,1,no longer needed
+1309,26779,2026-08-13,1,defective
+1310,26871,2026-08-20,1,wrong item
+1311,26880,2026-08-16,1,defective
+1312,26883,2026-09-03,3,no longer needed
+1313,26902,2026-09-03,1,changed mind
+1314,26910,2026-08-25,1,changed mind
+1315,26929,2026-08-15,2,defective
+1316,26931,2026-08-17,2,damaged in transit
+1317,26937,2026-09-02,2,no longer needed
+1318,26953,2026-08-21,2,wrong item
+1319,26954,2026-08-24,1,defective
+1320,26975,2026-08-30,1,no longer needed
+1321,26996,2026-08-27,1,changed mind
+1322,27002,2026-09-06,1,defective
+1323,27005,2026-08-27,1,defective
+1324,27006,2026-08-15,3,defective
+1325,27049,2026-08-13,1,no longer needed
+1326,27095,2026-08-05,1,defective
+1327,27099,2026-08-16,1,defective
+1328,27108,2026-09-04,1,wrong item
+1329,27110,2026-08-23,2,damaged in transit
+1330,27124,2026-08-31,1,defective
+1331,27135,2026-08-13,1,wrong item
+1332,27159,2026-08-15,1,defective
+1333,27199,2026-08-09,1,no longer needed
+1334,27212,2026-08-30,1,damaged in transit
+1335,27214,2026-08-28,1,no longer needed
+1336,27237,2026-08-31,1,changed mind
+1337,27239,2026-08-23,1,no longer needed
+1338,27277,2026-08-19,1,changed mind
+1339,27292,2026-08-27,1,no longer needed
+1340,27321,2026-09-05,1,damaged in transit
+1341,27323,2026-08-13,1,changed mind
+1342,27325,2026-09-07,1,no longer needed
+1343,27330,2026-08-17,1,no longer needed
+1344,27369,2026-08-25,1,damaged in transit
+1345,27389,2026-09-05,1,no longer needed
+1346,27409,2026-08-17,2,changed mind
+1347,27412,2026-08-06,1,defective
+1348,27438,2026-09-07,1,defective
+1349,27445,2026-08-24,1,no longer needed
+1350,27462,2026-09-05,1,wrong item
+1351,27515,2026-08-26,1,changed mind
+1352,27523,2026-09-02,3,changed mind
+1353,27530,2026-08-13,1,defective
+1354,27536,2026-08-29,1,wrong item
+1355,27568,2026-08-30,1,no longer needed
+1356,27586,2026-08-08,1,wrong item
+1357,27596,2026-09-03,1,no longer needed
+1358,27602,2026-08-20,2,changed mind
+1359,27635,2026-09-04,1,damaged in transit
+1360,27647,2026-08-14,1,changed mind
+1361,27661,2026-08-26,1,damaged in transit
+1362,27674,2026-08-20,1,defective
+1363,27677,2026-08-21,1,no longer needed
+1364,27682,2026-08-23,1,defective
+1365,27690,2026-08-17,1,wrong item
+1366,27716,2026-08-06,1,damaged in transit
+1367,27734,2026-08-16,1,no longer needed
+1368,27736,2026-08-07,2,changed mind
+1369,27751,2026-08-22,1,changed mind
+1370,27764,2026-08-14,1,no longer needed
+1371,27774,2026-08-06,2,wrong item
+1372,27776,2026-08-24,1,damaged in transit
+1373,27791,2026-08-27,1,changed mind
+1374,27800,2026-08-21,1,changed mind
+1375,27803,2026-09-01,1,wrong item
+1376,27805,2026-08-17,1,changed mind
+1377,27858,2026-08-23,1,damaged in transit
+1378,27867,2026-08-28,3,no longer needed
+1379,27871,2026-08-04,2,no longer needed
+1380,27902,2026-08-10,1,wrong item
+1381,27930,2026-09-18,1,wrong item
+1382,27946,2026-09-28,2,defective
+1383,27960,2026-09-25,1,defective
+1384,27962,2026-09-07,1,damaged in transit
+1385,28038,2026-09-30,2,damaged in transit
+1386,28092,2026-09-05,1,damaged in transit
+1387,28121,2026-09-21,1,wrong item
+1388,28126,2026-09-30,1,no longer needed
+1389,28173,2026-09-14,1,changed mind
+1390,28178,2026-09-12,1,damaged in transit
+1391,28201,2026-09-30,1,no longer needed
+1392,28214,2026-09-30,1,defective
+1393,28221,2026-09-30,1,damaged in transit
+1394,28228,2026-09-30,1,damaged in transit
+1395,28230,2026-09-30,1,wrong item
+1396,28232,2026-09-30,1,damaged in transit
+1397,28243,2026-09-13,1,defective
+1398,28247,2026-09-09,2,wrong item
+1399,28266,2026-09-28,3,defective
+1400,28299,2026-09-24,2,changed mind
+1401,28319,2026-09-30,1,no longer needed
+1402,28327,2026-09-24,1,defective
+1403,28348,2026-09-30,2,defective
+1404,28371,2026-09-30,2,defective
+1405,28387,2026-09-30,1,defective
+1406,28396,2026-09-12,1,no longer needed
+1407,28407,2026-09-30,2,changed mind
+1408,28410,2026-09-30,1,defective
+1409,28423,2026-09-09,1,no longer needed
+1410,28427,2026-09-29,2,changed mind
+1411,28428,2026-09-30,3,changed mind
+1412,28430,2026-09-10,1,wrong item
+1413,28484,2026-09-21,1,no longer needed
+1414,28486,2026-09-09,3,wrong item
+1415,28492,2026-09-21,1,damaged in transit
+1416,28499,2026-09-21,2,changed mind
+1417,28503,2026-09-24,1,no longer needed
+1418,28526,2026-09-13,1,defective
+1419,28538,2026-09-26,1,wrong item
+1420,28577,2026-09-23,1,no longer needed
+1421,28579,2026-09-07,1,defective
+1422,28590,2026-09-05,1,damaged in transit
+1423,28602,2026-09-26,1,defective
+1424,28604,2026-09-13,1,no longer needed
+1425,28621,2026-09-17,2,wrong item
+1426,28622,2026-09-17,2,defective
+1427,28663,2026-09-13,1,no longer needed
+1428,28688,2026-09-29,1,defective
+1429,28711,2026-09-07,2,damaged in transit
+1430,28736,2026-09-25,1,no longer needed
+1431,28741,2026-09-17,1,changed mind
+1432,28762,2026-09-19,1,wrong item
+1433,28835,2026-09-25,1,defective
+1434,28841,2026-09-22,3,wrong item
+1435,28850,2026-09-22,1,defective
+1436,28929,2026-09-22,2,changed mind
+1437,28945,2026-09-14,1,changed mind
+1438,28965,2026-09-30,1,wrong item
+1439,28971,2026-09-30,1,no longer needed
+1440,28985,2026-09-13,1,no longer needed
+1441,29003,2026-09-19,1,no longer needed
+1442,29014,2026-09-17,1,wrong item
+1443,29023,2026-09-11,1,defective
+1444,29036,2026-09-14,2,no longer needed
+1445,29068,2026-09-22,1,defective
+1446,29089,2026-09-16,1,wrong item
+1447,29095,2026-09-23,1,defective
+1448,29174,2026-09-13,1,damaged in transit
+1449,29182,2026-09-30,1,defective
+1450,29216,2026-09-20,2,wrong item
+1451,29236,2026-09-28,1,defective
+1452,29258,2026-09-30,2,no longer needed
+1453,29276,2026-09-30,2,defective
+1454,29317,2026-09-13,2,no longer needed
+1455,29340,2026-09-06,3,no longer needed
+1456,29343,2026-09-23,1,no longer needed
+1457,29366,2026-09-24,1,no longer needed
+1458,29368,2026-09-15,1,wrong item
+1459,29371,2026-09-29,1,changed mind
+1460,29381,2026-09-18,1,defective
+1461,29399,2026-09-21,2,changed mind
+1462,29430,2026-09-16,1,no longer needed
+1463,29453,2026-09-14,3,no longer needed
+1464,29454,2026-09-20,1,damaged in transit
+1465,29459,2026-09-30,1,no longer needed
+1466,29477,2026-09-25,1,defective
+1467,29479,2026-09-29,1,defective
+1468,29500,2026-09-07,2,no longer needed
+1469,29535,2026-09-30,2,damaged in transit
+1470,29557,2026-09-19,2,changed mind
+1471,29583,2026-09-13,1,no longer needed
+1472,29622,2026-09-11,3,changed mind
+1473,29641,2026-09-17,1,wrong item
+1474,29656,2026-09-30,3,changed mind
+1475,29669,2026-09-28,1,no longer needed
+1476,29678,2026-09-18,1,defective
+1477,29706,2026-09-28,1,defective
+1478,29744,2026-09-13,1,damaged in transit
+1479,29752,2026-09-30,1,no longer needed
+1480,29769,2026-09-13,1,changed mind
+1481,29795,2026-09-18,2,defective
+1482,29803,2026-09-10,1,no longer needed
+1483,29807,2026-09-16,1,changed mind
+1484,29814,2026-09-22,1,changed mind
+1485,29828,2026-09-28,1,damaged in transit
+1486,29834,2026-09-30,2,no longer needed
+1487,29878,2026-09-30,1,defective
+1488,29893,2026-09-26,3,changed mind
+1489,29898,2026-09-30,3,defective
+1490,29942,2026-09-23,1,defective
+1491,29945,2026-09-30,3,wrong item
+1492,29986,2026-09-09,1,defective
+1493,30008,2026-09-19,1,no longer needed
+1494,30028,2026-09-21,1,wrong item
+1495,30048,2026-09-19,1,defective
+1496,30057,2026-09-16,3,changed mind
+1497,30070,2026-09-18,1,no longer needed
+1498,30112,2026-09-10,2,changed mind
+1499,30119,2026-09-16,1,defective
+1500,30140,2026-09-16,1,damaged in transit
+1501,30146,2026-09-17,1,damaged in transit
