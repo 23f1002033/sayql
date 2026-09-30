@@ -5,9 +5,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import select
 
 import tools
 import app.tools as agent_tools
+from app.audit.db import QUERY_HISTORY
+from app.audit.db import get_engine as get_audit_engine
+from app.semantic.loader import load_metrics
 
 load_dotenv()
 
@@ -26,7 +30,7 @@ TOOL_FUNCTIONS = {
 # with run_sql kept only as a validated fallback.
 AGENT_TOOL_FUNCTIONS = {
     "resolve_metric": lambda args, sid, q: agent_tools.resolve_metric(
-        args.get("term", ""), session_id=sid, question=q
+        args.get("term", ""), accept_default=bool(args.get("accept_default", False)), session_id=sid, question=q
     ),
     "query_metric": lambda args, sid, q: agent_tools.query_metric(args, session_id=sid, question=q),
     "explain_change": lambda args, sid, q: agent_tools.explain_change(
@@ -103,5 +107,46 @@ async def call_agent_tool(name: str, request: Request):
 
     return AGENT_TOOL_FUNCTIONS[name](args, session_id, question)
 
+
+@app.get("/api/metrics")
+async def list_metrics():
+    metrics, _ = load_metrics()
+    return {
+        "metrics": [
+            {"name": m.name, "version": m.version, "description": m.description, "unit": m.unit}
+            for m in metrics.values()
+        ]
+    }
+
+
+@app.get("/api/history")
+async def get_history(limit: int = 20):
+    engine = get_audit_engine()
+    with engine.connect() as conn:
+        rows = conn.execute(
+            select(QUERY_HISTORY).order_by(QUERY_HISTORY.c.id.desc()).limit(limit)
+        ).mappings().all()
+
+    return {
+        "history": [
+            {
+                "id": r["id"],
+                "question": r["question"],
+                "status": r["status"],
+                "definition_version": r["definition_version"],
+                "row_count": r["row_count"],
+                "elapsed_ms": r["elapsed_ms"],
+                "created_at": r["created_at"].isoformat() if r["created_at"] else None,
+            }
+            for r in rows
+        ]
+    }
+
+
+# New Next.js UI (Phase 3), mounted at /app while the old UI at "/" is still
+# being voice-tested. Must be registered before the "/" mount below, or that
+# mount's prefix match would shadow every /app/* request.
+if os.path.isdir("frontend/out"):
+    app.mount("/app", StaticFiles(directory="frontend/out", html=True), name="frontend")
 
 app.mount("/", StaticFiles(directory="static", html=True), name="static")

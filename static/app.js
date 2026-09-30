@@ -24,13 +24,14 @@ Today's date is 2026-09-30. Resolve relative date terms against it, using date r
 - "this month" means 2026-09-01 through 2026-09-30. When comparing "this month" to another period, compare it against the previous full month (2026-08-01 through 2026-08-31).
 
 Rules:
-- Always call resolve_metric before querying any business term. If it returns an ambiguous result, ask the user one short question naming the options - do not guess which one they mean.
+- Always call resolve_metric before querying any business term. If it returns an ambiguous result, ask the user one short question naming the options - do not guess which one they mean. If the user answers with something like "any", "either", "whatever", or "you pick", call resolve_metric again with the same term and set accept_default to true, then say which definition you used and that it is the default for that term.
 - Use query_metric for KPI lookups, breakdowns by one dimension, and time trends.
 - For a "why did this change" question, call explain_change exactly once, then: state the overall change, name the top contributor and its share of the change (or, if explain_change returns a ratio decomposition, say which side - numerator or denominator - drove it), and mention one limit of the analysis (this shows correlation, not proven cause).
 - When a question names a specific product, pass it as a product_name filter (field: "product_name") and let the system resolve it. Never guess or make up a sku yourself. If the system comes back with a clarification (no match, or more than one match), ask the user to pick from the options given.
 - Use run_sql only as a fallback when query_metric cannot express the question.
+- Every tool result gives you pre-formatted spoken text for each number, in fields such as headline_spoken, value_spoken, previous_spoken, current_spoken, delta_spoken, or a plain note field. Read those exactly as written, word for word. Never compute, convert, or round a number yourself, and never guess how to say a number in lakh or crore - the tool result already did that. If a value has no spoken field, do not state it.
 - Never state a number that did not come from a tool result.
-- Keep spoken answers to three sentences or fewer. Round numbers for speech, in lakh or crore for large rupee amounts.
+- Keep spoken answers to three sentences or fewer.
 - Always say which metric definition you used, and name its unit (rupees, units, or percent) as given in the tool result - do not guess the unit yourself.`;
 
 const TOOLS = [
@@ -41,7 +42,16 @@ const TOOLS = [
       "Look up a business term against the metric dictionary. Returns the matched metric, an ambiguous result with options to ask about, or not_found. Always call this before query_metric or explain_change for any business term.",
     parameters: {
       type: "object",
-      properties: { term: { type: "string", description: "the business term as the user said it" } },
+      properties: {
+        term: { type: "string", description: "the business term as the user said it" },
+        accept_default: {
+          type: "boolean",
+          description:
+            "set true only on a second call for the same term, after the user dismissed the clarifying " +
+            "question (said something like any, either, whatever, or you pick). Returns the term's default " +
+            "definition instead of asking again.",
+        },
+      },
       required: ["term"],
     },
   },
@@ -443,17 +453,12 @@ async function handleToolCall(name, callId, args) {
       }
     }
 
-    let compact = result;
-    if ((name === "query_metric" || name === "run_sql") && result && Array.isArray(result.rows)) {
-      compact = {
-        columns: result.columns,
-        row_count: result.row_count,
-        rows: result.rows.slice(0, 20),
-        truncated: result.truncated || result.row_count > 20,
-      };
-    }
-
-    pendingToolResults.push({ call_id: callId, result: JSON.stringify(compact) });
+    // The model only ever sees model_payload: pre-formatted spoken strings,
+    // never a raw number. It must read numbers exactly as given, never
+    // compute or convert them itself (that produced a wrong lakh/crore
+    // conversion when it saw raw rows directly).
+    const modelPayload = data.model_payload !== undefined ? data.model_payload : { error: "no data" };
+    pendingToolResults.push({ call_id: callId, result: JSON.stringify(modelPayload) });
   } catch (err) {
     console.error("[SayQL card]", name, "tool call failed", err);
     if (name === "query_metric" || name === "run_sql") {

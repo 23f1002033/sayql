@@ -141,3 +141,74 @@ def test_relative_change_words_one_decimal_below_100():
     from app.analysis.explain_change import _relative_pct_words
     assert _relative_pct_words(26.315) == "26.3 percent"
     assert _relative_pct_words(-99.9) == "99.9 percent"
+
+
+def test_regression_spoken_currency_values_from_the_reported_bug():
+    assert format_value(5381999, "currency", spoken=True) == "53.8 lakh rupees"
+    assert format_value(5080580, "currency", spoken=True) == "50.8 lakh rupees"
+    assert format_value(150000, "currency", spoken=True) == "1.5 lakh rupees"
+    assert format_value(12500000, "currency", spoken=True) == "1.25 crore rupees"
+
+
+def _find_bare_numbers(obj):
+    """Walk a JSON-able structure and collect every int/float found, except
+    inside string values (which may legitimately contain digits as words
+    like "went from 2 to 16", already spoken-safe small counts)."""
+    found = []
+    if isinstance(obj, bool):
+        return found
+    if isinstance(obj, (int, float)):
+        found.append(obj)
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            found.extend(_find_bare_numbers(v))
+    elif isinstance(obj, list):
+        for v in obj:
+            found.extend(_find_bare_numbers(v))
+    return found
+
+
+def test_model_payload_has_no_raw_currency_number_for_kpi():
+    import app.tools as tools
+
+    response = tools.query_metric({
+        "metric": "gross_revenue",
+        "time_range": {"start": "2026-08-01", "end": "2026-08-31"},
+    })
+    payload = response["model_payload"]
+    assert "headline_spoken" in payload
+    assert isinstance(payload["headline_spoken"], str)
+    # no raw numeric value anywhere in the model-facing payload
+    assert _find_bare_numbers(payload) == []
+
+
+def test_model_payload_has_no_raw_numbers_for_breakdown():
+    import app.tools as tools
+
+    response = tools.query_metric({
+        "metric": "refund_amount",
+        "dimensions": ["city"],
+        "time_range": {"start": "2026-09-01", "end": "2026-09-30"},
+    })
+    payload = response["model_payload"]
+    assert all("value_spoken" in row for row in payload["rows_spoken"])
+    for row in payload["rows_spoken"]:
+        assert isinstance(row["value_spoken"], str)
+    # row_count/showing are plain small integers (count of rows, not a
+    # currency value), which is fine - only currency/percent values need
+    # the spoken-string treatment.
+    assert isinstance(payload["row_count"], int)
+
+
+def test_model_payload_has_no_raw_numbers_for_why_ratio():
+    import app.tools as tools
+
+    response = tools.explain_change(
+        "return rate", "2026-09-01", "2026-09-30", "2026-08-01", "2026-08-31",
+        filters=[{"field": "sku", "value": "SKU-0001"}],
+    )
+    payload = response["model_payload"]
+    assert isinstance(payload["previous_spoken"], str)
+    assert isinstance(payload["current_spoken"], str)
+    assert isinstance(payload["delta_spoken"], str)
+    assert "ratio_summary_spoken" in payload

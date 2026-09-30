@@ -32,14 +32,14 @@ def format_value(value, unit: str, is_delta: bool = False, spoken: bool = False)
     return str(value)
 
 
-def _spoken_scale(value: float) -> str:
+def _spoken_scale(value: float, decimals: int = 1) -> str:
     # "5.0" reads awkwardly aloud; say "5" once rounding lands on a whole
     # number (4.998 rounds to "5.0" at 1 decimal, so check the rounded
     # value, not the raw one).
-    rounded = round(value, 1)
+    rounded = round(value, decimals)
     if rounded == int(rounded):
         return f"{int(rounded)}"
-    return f"{rounded:.1f}"
+    return f"{rounded:.{decimals}f}"
 
 
 def _format_currency(value: float, spoken: bool) -> str:
@@ -48,7 +48,11 @@ def _format_currency(value: float, spoken: bool) -> str:
 
     if spoken:
         if v >= CRORE:
-            return f"{sign}{_spoken_scale(v / CRORE)} crore rupees"
+            # crore amounts are large enough that 1 decimal loses real
+            # precision (1.2 vs 1.3 crore is a 1,00,000 rupee gap), and
+            # round(x, 1) can land on a banker's-rounding surprise right at
+            # a clean value like 1.25 -> 1.2. Use 2 decimals here.
+            return f"{sign}{_spoken_scale(v / CRORE, decimals=2)} crore rupees"
         if v >= LAKH:
             return f"{sign}{_spoken_scale(v / LAKH)} lakh rupees"
         if v >= 1_000:

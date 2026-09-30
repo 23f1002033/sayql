@@ -37,14 +37,15 @@ def _log(session_id, question, args, sql, metric_def, exec_result, status):
 
 
 def _make_card(
-    kind, headline_value=None, period_label=None, delta=None, narration_seed=None,
+    kind, headline_value=None, previous_value=None, period_label=None, delta=None, narration_seed=None,
     chart_series=None, definition=None, evidence=None, sql=None, row_count=None,
     elapsed_ms=None, options=None, message=None, followups=None,
-    low_base=False, low_base_note=None,
+    low_base=False, low_base_note=None, ratio=None, volume_context_note=None,
 ):
     return {
         "kind": kind,
         "headline_value": headline_value,
+        "previous_value": previous_value,
         "period_label": period_label,
         "delta": delta,
         "narration_seed": narration_seed,
@@ -59,20 +60,25 @@ def _make_card(
         "followups": followups,
         "low_base": low_base,
         "low_base_note": low_base_note,
+        "ratio": ratio,
+        "volume_context_note": volume_context_note,
     }
 
 
 def _error_card(message):
-    return {"result": {"error": message}, "card": _make_card(kind="error", message=message)}
+    payload = {"error": message}
+    return {"result": payload, "card": _make_card(kind="error", message=message), "model_payload": payload}
 
 
 def _clarification_card(resolve_result):
+    payload = {"status": "ambiguous", "options": resolve_result.options, "message": resolve_result.message}
     return {
-        "result": {"status": "ambiguous", "options": resolve_result.options, "message": resolve_result.message},
+        "result": payload,
         "card": _make_card(
             kind="clarification", options=resolve_result.options,
             message=resolve_result.message, narration_seed=resolve_result.message,
         ),
+        "model_payload": payload,
     }
 
 
@@ -121,8 +127,8 @@ def _resolve_product_filters(filters, workspace_id):
         else:
             message = f"No product matches '{f.value}'."
         card = _make_card(kind="clarification", options=names, message=message, narration_seed=message)
-        return None, {"result": {"status": "ambiguous" if names else "not_found",
-                                  "options": names, "message": message}, "card": card}
+        payload = {"status": "ambiguous" if names else "not_found", "options": names, "message": message}
+        return None, {"result": payload, "card": card, "model_payload": payload}
 
     return resolved, None
 
@@ -155,16 +161,20 @@ def _infer_kind(columns, rows):
     return "breakdown"
 
 
-def resolve_metric(term: str, session_id: str = None, question: str = None) -> dict:
-    result = resolve(term)
+def resolve_metric(term: str, accept_default: bool = False, session_id: str = None, question: str = None) -> dict:
+    result = resolve(term, accept_default=accept_default)
 
     if result.status == "found":
         m = result.metric
-        payload = {"status": "found", "metric": m.name, "description": m.description, "version": m.version}
+        payload = {
+            "status": "found", "metric": m.name, "description": m.description, "version": m.version,
+            "used_default": result.used_default,
+        }
+        narration_seed = result.message if result.used_default else f"'{term}' maps to {m.name}: {m.description}"
         card = _make_card(
             kind="kpi",
             definition=_definition_payload(m),
-            narration_seed=f"'{term}' maps to {m.name}: {m.description}",
+            narration_seed=narration_seed,
         )
     elif result.status == "ambiguous":
         payload = {"status": "ambiguous", "options": result.options, "message": result.message}
@@ -175,7 +185,7 @@ def resolve_metric(term: str, session_id: str = None, question: str = None) -> d
         card = _make_card(kind="error", message=result.message, options=result.options)
 
     _log(session_id, question, {"tool": "resolve_metric", "term": term}, None, None, None, result.status)
-    return {"result": payload, "card": card}
+    return {"result": payload, "card": card, "model_payload": payload}
 
 
 def query_metric(plan_args: dict, session_id: str = None, question: str = None) -> dict:
@@ -205,37 +215,58 @@ def query_metric(plan_args: dict, session_id: str = None, question: str = None) 
         return _error_card(str(err))
 
     kind = "trend" if plan.grain else ("breakdown" if plan.dimensions else "kpi")
+    period_label = _period_label(plan.time_range)
 
     if kind == "kpi":
         raw_value = exec_result["rows"][0][0] if exec_result["rows"] else None
         headline_value = format_value(raw_value, metric_def.unit)
         spoken_value = format_value(raw_value, metric_def.unit, spoken=True)
         chart_series = None
+        model_payload = {
+            "kind": kind,
+            "metric": metric_def.name,
+            "period_label": period_label,
+            "headline_spoken": spoken_value,
+            "definition": metric_def.description,
+        }
     else:
         headline_value = None
         chart_series = [{"label": row[0], "value": row[-1]} for row in exec_result["rows"]]
+        top_rows = exec_result["rows"][:5]
+        model_payload = {
+            "kind": kind,
+            "metric": metric_def.name,
+            "period_label": period_label,
+            "rows_spoken": [
+                {"label": row[0], "value_spoken": format_value(row[-1], metric_def.unit, spoken=True)}
+                for row in top_rows
+            ],
+            "row_count": exec_result["row_count"],
+            "showing": len(top_rows),
+            "definition": metric_def.description,
+        }
 
     evidence = [
         f"resolved metric: {metric_def.name} (v{metric_def.version})",
-        f"period: {_period_label(plan.time_range)}",
+        f"period: {period_label}",
         f"{exec_result['row_count']} row(s) in {exec_result['elapsed_ms']} ms",
     ]
 
     if kind == "kpi":
         narration_seed = (
-            f"{metric_def.name.replace('_', ' ')} for {_period_label(plan.time_range)} "
+            f"{metric_def.name.replace('_', ' ')} for {period_label} "
             f"was {spoken_value}, using the {metric_def.name} definition."
         )
     else:
         narration_seed = (
-            f"{metric_def.name.replace('_', ' ')} for {_period_label(plan.time_range)}, "
+            f"{metric_def.name.replace('_', ' ')} for {period_label}, "
             f"broken down into {exec_result['row_count']} groups, using the {metric_def.name} definition."
         )
 
     card = _make_card(
         kind=kind,
         headline_value=headline_value,
-        period_label=_period_label(plan.time_range),
+        period_label=period_label,
         chart_series=chart_series,
         definition=_definition_payload(metric_def),
         evidence=evidence,
@@ -246,7 +277,7 @@ def query_metric(plan_args: dict, session_id: str = None, question: str = None) 
     )
 
     _log(session_id, question, {"tool": "query_metric", "args": plan_args}, safe_sql, metric_def, exec_result, "ok")
-    return {"result": exec_result, "card": card}
+    return {"result": exec_result, "card": card, "model_payload": model_payload}
 
 
 def explain_change(
@@ -292,6 +323,15 @@ def explain_change(
     low_base = bool(ratio and ratio.get("low_base"))
     low_base_note = ratio.get("low_base_note") if ratio else None
 
+    model_payload = {
+        "kind": "why",
+        "metric": metric_def.name,
+        "previous_spoken": prev_spoken,
+        "current_spoken": curr_spoken,
+        "delta_spoken": delta_spoken,
+        "definition": metric_def.description,
+    }
+
     if ratio:
         evidence.append(f"decomposed into {ratio['numerator_metric']} and {ratio['denominator_metric']}")
         evidence.append(ratio["summary"])
@@ -308,13 +348,19 @@ def explain_change(
         if low_base_note:
             narration_seed += f" {low_base_note}"
         narration_seed += " This shows correlation, not proven cause."
+        model_payload["ratio_summary_spoken"] = ratio["summary_spoken"]
+        if low_base_note:
+            model_payload["low_base_note"] = low_base_note
     else:
         evidence.append(f"checked dimension: {dimension}" if dimension else "no dimension breakdown requested")
         for c in result["top_contributors"]:
-            evidence.append(
-                f"{c['dimension_value']}: change {format_value(c['change'], unit, is_delta=True)} "
-                f"({_fmt_pct(c['share_of_total_change'] * 100)} of total change)"
-            )
+            if _share_in_range(c):
+                evidence.append(
+                    f"{c['dimension_value']}: change {format_value(c['change'], unit, is_delta=True)} "
+                    f"({_fmt_pct(c['share_of_total_change'] * 100)} of total change)"
+                )
+            else:
+                evidence.append(_out_of_range_share_phrase(c, unit, spoken=False))
         chart_series = [
             {"label": c["dimension_value"], "value": c["change"]} for c in result["top_contributors"]
         ]
@@ -323,10 +369,16 @@ def explain_change(
             evidence.append(volume_context["note"])
         top = result["top_contributors"][0] if result["top_contributors"] else None
         if top:
+            if _share_in_range(top):
+                contributor_sentence = (
+                    f"{top['dimension_value']} was the top contributor at "
+                    f"{_fmt_pct(top['share_of_total_change'] * 100, spoken=True)} of the change."
+                )
+            else:
+                contributor_sentence = _out_of_range_share_phrase(top, unit, spoken=True)
             narration_seed = (
                 f"{metric_def.name.replace('_', ' ')} went from {prev_spoken} to {curr_spoken} "
-                f"({delta_spoken}). {top['dimension_value']} was the top contributor at "
-                f"{_fmt_pct(top['share_of_total_change'] * 100, spoken=True)} of the change."
+                f"({delta_spoken}). {contributor_sentence}"
             )
         else:
             narration_seed = (
@@ -337,12 +389,39 @@ def explain_change(
             narration_seed += f" {volume_context['note']}"
         narration_seed += " This shows correlation, not proven cause."
 
+        model_payload["top_contributors_spoken"] = [
+            {
+                "label": c["dimension_value"],
+                "note": (
+                    f"{c['dimension_value']}: {_fmt_pct(c['share_of_total_change'] * 100, spoken=True)} of the change"
+                    if _share_in_range(c) else _out_of_range_share_phrase(c, unit, spoken=True)
+                ),
+            }
+            for c in result["top_contributors"][:5]
+        ]
+        if volume_context:
+            model_payload["volume_context_note"] = volume_context["note"]
+
     card = _make_card(
         kind="why",
         headline_value=curr_display,
+        previous_value=prev_display,
         delta={"absolute": result["absolute_change"], "percent": result["percent_change"], "text": delta_text},
         low_base=low_base,
         low_base_note=low_base_note,
+        ratio=({
+            "numerator_metric": ratio["numerator_metric"],
+            "numerator_unit": ratio["numerator_unit"],
+            "denominator_metric": ratio["denominator_metric"],
+            "denominator_unit": ratio["denominator_unit"],
+            "previous_numerator": ratio["previous_numerator"],
+            "current_numerator": ratio["current_numerator"],
+            "previous_denominator": ratio["previous_denominator"],
+            "current_denominator": ratio["current_denominator"],
+            "driver": ratio["driver"],
+            "driver_summary": ratio["summary"],
+        } if ratio else None),
+        volume_context_note=(result.get("volume_context") or {}).get("note"),
         chart_series=chart_series,
         definition=_definition_payload(metric_def),
         evidence=evidence,
@@ -351,7 +430,7 @@ def explain_change(
 
     _log(session_id, question, {"tool": "explain_change", "metric": metric, "dimension": dimension},
          None, metric_def, None, "ok")
-    return {"result": result, "card": card}
+    return {"result": result, "card": card, "model_payload": model_payload}
 
 
 def _fmt_pct(value, spoken=False):
@@ -360,6 +439,32 @@ def _fmt_pct(value, spoken=False):
     if spoken:
         return f"{abs(value):.0f} percent" if abs(value) >= 100 else f"{abs(value):.1f} percent"
     return f"{value:.1f}%"
+
+
+def _share_in_range(c) -> bool:
+    return 0 <= c["share_of_total_change"] <= 1
+
+
+def _out_of_range_share_phrase(c, unit, spoken) -> str:
+    """A contributor's share is only a sane percent within [0, 1]. Outside
+    that range (share > 100%, or negative because it moved opposite to the
+    net), a percent is actively misleading - _fmt_pct's abs() would even
+    hide the sign. State the raw change instead and say why the net looks
+    different: other groups either partly offset it, or overwhelmed it.
+    """
+    share = c["share_of_total_change"]
+    direction = "rose" if c["change"] > 0 else "fell"
+    change_text = format_value(abs(c["change"]), unit, is_delta=True, spoken=spoken)
+
+    if share > 1:
+        return (
+            f"{c['dimension_value']} {direction} by {change_text}, more than the net change, "
+            "because other groups moved the other way."
+        )
+    return (
+        f"{c['dimension_value']} {direction} by {change_text}, but the net change went the other way "
+        "because other groups moved more."
+    )
 
 
 def run_sql(sql: str, session_id: str = None, question: str = None) -> dict:
@@ -387,12 +492,24 @@ def run_sql(sql: str, session_id: str = None, question: str = None) -> dict:
         narration_seed=None,
     )
 
+    # No metric/unit is known for arbitrary SQL, so there is no lakh/crore
+    # form to give. Cap rows so nothing huge lands in the model's context,
+    # and read them exactly as given - the system prompt covers the rest.
+    model_payload = {
+        "kind": kind,
+        "columns": exec_result["columns"],
+        "rows": exec_result["rows"][:5],
+        "row_count": exec_result["row_count"],
+        "showing": min(5, len(exec_result["rows"])),
+    }
+
     _log(session_id, question, {"tool": "run_sql", "sql": sql}, safe_sql, None, exec_result, "ok")
-    return {"result": exec_result, "card": card}
+    return {"result": exec_result, "card": card, "model_payload": model_payload}
 
 
 def suggest_followups(questions: list, session_id: str = None, question: str = None) -> dict:
     followups = list(questions or [])[:4]
     card = _make_card(kind="followups", followups=followups)
+    payload = {"followups": followups}
     _log(session_id, question, {"tool": "suggest_followups", "questions": followups}, None, None, None, "ok")
-    return {"result": {"followups": followups}, "card": card}
+    return {"result": payload, "card": card, "model_payload": payload}

@@ -49,7 +49,12 @@ def test_return_rate_spike_decomposes_for_planted_sku():
     assert decomposition["driver"] == "both"
     assert decomposition["current_numerator"] > decomposition["previous_numerator"]
     assert "both moved sharply" in decomposition["summary"]
-    assert "percentage points" in decomposition["summary"]
+    # raw counts for both sides, not a percentage
+    assert "units returned went from 2 to 16" in decomposition["summary"]
+    assert "units sold from 15 to 88" in decomposition["summary"]
+    # the rate's own percentage-point change belongs in the outer narration
+    # (stated once there), not repeated inside this summary
+    assert "percentage points" not in decomposition["summary"]
 
 
 def test_explain_change_reports_definition_version():
@@ -177,16 +182,20 @@ def test_tools_explain_change_includes_volume_context_in_narration_and_evidence(
     assert "Mumbai" in response["card"]["narration_seed"]
 
 
-def test_both_moved_sharply_leads_with_rate_change_and_percentage_points():
-    result = explain_change(
-        "return rate", SEPTEMBER, AUGUST,
-        filters=[Filter(field="sku", value="SKU-0001")],
+def test_both_moved_sharply_narration_leads_with_rate_change_stated_once():
+    import app.tools as tools
+
+    response = tools.explain_change(
+        "return rate", "2026-09-01", "2026-09-29", "2026-08-01", "2026-08-31",
+        filters=[{"field": "sku", "value": "SKU-0001"}],
     )
-    decomposition = result["ratio_decomposition"]
-    assert decomposition["driver"] == "both"
-    assert decomposition["summary"].startswith("both moved sharply")
-    assert "percentage points" in decomposition["summary"]
-    assert "%" not in decomposition["summary"]
+    narration = response["card"]["narration_seed"]
+    # the rate's own change is stated once, up front ("went from X to Y (up Z
+    # percentage points)"), before the both-moved-sharply summary
+    assert narration.index("went from") < narration.index("both moved sharply")
+    assert narration.count("percentage points") == 1
+    assert "units returned went from 2 to 16" in narration
+    assert "units sold from 15 to 88" in narration
 
 
 def test_not_both_moved_when_only_one_side_exceeds_threshold():
@@ -202,3 +211,25 @@ def test_not_both_moved_when_only_one_side_exceeds_threshold():
         and abs(decomposition["denominator_change_percent"]) > 100
     )
     assert "both moved sharply" not in decomposition["summary"]
+
+
+def test_out_of_range_share_not_spoken_as_percent_on_storewide_returns():
+    # store-wide, unfiltered, full month: Bangalore's own change is opposite
+    # in sign to the net change, so its share is outside [0, 1] - it must
+    # not be spoken as a misleading percent (this window, specifically,
+    # produces that case - a shorter window may not).
+    full_september = TimeRange(start=date(2026, 9, 1), end=date(2026, 9, 30))
+    result = explain_change("refund amount", full_september, AUGUST, dimension="city")
+    top = result["top_contributors"][0]
+    assert not (0 <= top["share_of_total_change"] <= 1)
+
+    import app.tools as tools
+    response = tools.explain_change(
+        "refund_amount", "2026-09-01", "2026-09-30", "2026-08-01", "2026-08-31", dimension="city",
+    )
+    narration = response["card"]["narration_seed"]
+    assert "percent of the change" not in narration
+    assert "%" not in narration
+    direction = "rose" if top["change"] > 0 else "fell"
+    assert f"{top['dimension_value']} {direction} by" in narration
+    assert "net change" in narration

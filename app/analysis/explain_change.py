@@ -83,7 +83,7 @@ def _phrase_for_side(label, change_percent, previous, current, unit, is_low, spo
 
 
 def _build_summary(
-    driver, both_moved_sharply, rate_change_points,
+    driver, both_moved_sharply,
     numerator_label, denominator_label,
     numerator_change_percent, denominator_change_percent,
     previous_num, current_num, previous_den, current_den,
@@ -91,7 +91,13 @@ def _build_summary(
     spoken,
 ) -> str:
     if both_moved_sharply:
-        return f"both moved sharply; the rate itself changed by {rate_change_points:.1f} percentage points."
+        # The rate's own before/after is already stated by the caller right
+        # before this summary - say it once, not again here. Lead with that,
+        # then give the raw counts behind it.
+        return (
+            f"both moved sharply: {numerator_label} went from {previous_num:.0f} to {current_num:.0f}, "
+            f"{denominator_label} from {previous_den:.0f} to {current_den:.0f}."
+        )
 
     numerator_phrase = _phrase_for_side(
         numerator_label, numerator_change_percent, previous_num, current_num, numerator_unit, numerator_low, spoken
@@ -110,7 +116,7 @@ def _build_summary(
     return f"{numerator_phrase} and {denominator_phrase}."
 
 
-def _decompose_ratio(metric_def, current_range, compare_range, filters, workspace_id, previous_rate, current_rate):
+def _decompose_ratio(metric_def, current_range, compare_range, filters, workspace_id, previous_rate):
     numerator_def = get_metric_def(metric_def.why_components["numerator"])
     denominator_def = get_metric_def(metric_def.why_components["denominator"])
 
@@ -133,7 +139,6 @@ def _decompose_ratio(metric_def, current_range, compare_range, filters, workspac
         numerator_change_percent is not None and abs(numerator_change_percent) > BOTH_MOVED_THRESHOLD
         and denominator_change_percent is not None and abs(denominator_change_percent) > BOTH_MOVED_THRESHOLD
     )
-    rate_change_points = abs(current_rate - previous_rate) * 100
 
     if both_moved_sharply:
         driver = "both"
@@ -153,7 +158,7 @@ def _decompose_ratio(metric_def, current_range, compare_range, filters, workspac
             driver = "both"
 
     summary_args = (
-        driver, both_moved_sharply, rate_change_points,
+        driver, both_moved_sharply,
         numerator_label, denominator_label,
         numerator_change_percent, denominator_change_percent,
         previous_num, current_num, previous_den, current_den,
@@ -173,7 +178,9 @@ def _decompose_ratio(metric_def, current_range, compare_range, filters, workspac
 
     return {
         "numerator_metric": numerator_def.name,
+        "numerator_unit": numerator_def.unit,
         "denominator_metric": denominator_def.name,
+        "denominator_unit": denominator_def.unit,
         "current_numerator": current_num,
         "previous_numerator": previous_num,
         "numerator_change_percent": numerator_change_percent,
@@ -260,7 +267,7 @@ def explain_change(
         # of a per-dimension contribution breakdown (a percentage-point
         # delta on a rate does not decompose cleanly across dimensions).
         response["ratio_decomposition"] = _decompose_ratio(
-            metric_def, current_range, compare_range, filters, workspace_id, previous_value, current_value
+            metric_def, current_range, compare_range, filters, workspace_id, previous_value
         )
         return response
 

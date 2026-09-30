@@ -103,3 +103,32 @@ def test_kpi_narration_names_count_unit():
         "time_range": {"start": "2026-09-01", "end": "2026-09-30"},
     })
     assert "units" in response["card"]["narration_seed"]
+
+
+def test_ambiguous_term_has_a_default():
+    result = resolve("revenue")
+    assert result.status == "ambiguous"
+
+
+def test_accept_default_returns_the_default_metric():
+    result = resolve("revenue", accept_default=True)
+    assert result.status == "found"
+    assert result.metric.name == "net_revenue"
+    assert result.used_default is True
+    assert "net_revenue" in result.message
+    assert "default" in result.message
+
+
+def test_accept_default_false_still_asks():
+    result = resolve("revenue", accept_default=False)
+    assert result.status == "ambiguous"
+
+
+def test_tools_resolve_metric_accept_default_narration_names_default():
+    import app.tools as tools
+
+    response = tools.resolve_metric("revenue", accept_default=True)
+    assert response["result"]["status"] == "found"
+    assert response["result"]["used_default"] is True
+    assert "default" in response["card"]["narration_seed"]
+    assert "net_revenue" in response["card"]["narration_seed"]

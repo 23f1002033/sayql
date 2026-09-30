@@ -6,7 +6,10 @@
 # (dates, filter values, workspace_id) are passed as bound parameters.
 #
 # ambiguous_terms lists spoken terms that map to more than one metric; the
-# agent must ask which one instead of guessing.
+# agent must ask which one instead of guessing. Each entry also names a
+# default, used only if the user explicitly says the choice doesn't matter
+# ("any", "either", "whatever", "you pick") - the agent must still say
+# which definition it used and that it's the default for that term.
 
 metrics:
   net_revenue:
@@ -205,4 +208,6 @@ metrics:
         sku: "p.sku"
 
 ambiguous_terms:
-  revenue: [gross_revenue, net_revenue]
+  revenue:
+    options: [gross_revenue, net_revenue]
+    default: net_revenue
