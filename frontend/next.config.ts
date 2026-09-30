@@ -2,11 +2,11 @@ import type { NextConfig } from "next";
 
 import { BASE_PATH } from "./lib/basePath";
 
-// Static export, served by FastAPI. Mounted at /app until the voice loop is
-// verified and approved to replace the old static/ UI at "/".
+// Static export, served by FastAPI at "/". The old static/ UI now lives at
+// /classic for rollback safety.
 const nextConfig: NextConfig = {
   output: "export",
-  basePath: BASE_PATH,
+  ...(BASE_PATH ? { basePath: BASE_PATH } : {}),
   images: { unoptimized: true },
 };
 

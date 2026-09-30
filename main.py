@@ -1,4 +1,6 @@
 import os
+import time
+from collections import defaultdict, deque
 
 import httpx
 from dotenv import load_dotenv
@@ -17,6 +19,47 @@ load_dotenv()
 
 ASSEMBLYAI_API_KEY = os.environ.get("ASSEMBLYAI_API_KEY", "")
 TOKEN_URL = "https://agents.assemblyai.com/v1/token"
+
+# In-memory rate limiting for /api/voice-token. Good enough for a single
+# free-tier instance; a seam for Phase-later work would move this to Redis
+# if the app ever runs multiple worker processes, since counts would no
+# longer be shared across them.
+RATE_LIMIT_PER_IP = 3
+RATE_LIMIT_WINDOW_SECONDS = 10 * 60
+DAILY_LIMIT_GLOBAL = 150
+DAILY_WINDOW_SECONDS = 24 * 60 * 60
+
+_ip_request_times: dict[str, deque] = defaultdict(deque)
+_global_request_times: deque = deque()
+
+
+def _client_ip(request: Request) -> str:
+    # Trust X-Forwarded-For only for its first hop - the entry our own
+    # reverse proxy (Render) sets for the real client - never a later entry,
+    # which a client could forge by sending its own X-Forwarded-For header.
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+def _check_rate_limit(ip: str):
+    now = time.monotonic()
+
+    ip_times = _ip_request_times[ip]
+    while ip_times and now - ip_times[0] > RATE_LIMIT_WINDOW_SECONDS:
+        ip_times.popleft()
+    if len(ip_times) >= RATE_LIMIT_PER_IP:
+        return False, "Too many voice sessions from your connection. Wait a few minutes and try again."
+
+    while _global_request_times and now - _global_request_times[0] > DAILY_WINDOW_SECONDS:
+        _global_request_times.popleft()
+    if len(_global_request_times) >= DAILY_LIMIT_GLOBAL:
+        return False, "This demo has reached its limit of voice sessions for today. Please try again tomorrow."
+
+    ip_times.append(now)
+    _global_request_times.append(now)
+    return True, None
 
 # Legacy tools (M1/M2 pipeline), kept working for rollback safety.
 TOOL_FUNCTIONS = {
@@ -53,14 +96,23 @@ AGENT_TOOL_FUNCTIONS = {
 app = FastAPI()
 
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
 @app.get("/api/voice-token")
-async def voice_token():
+async def voice_token(request: Request):
     if not ASSEMBLYAI_API_KEY:
         return JSONResponse(
             {"error": "server is missing ASSEMBLYAI_API_KEY"}, status_code=500
         )
 
-    params = {"expires_in_seconds": 60, "max_session_duration_seconds": 600}
+    ok, message = _check_rate_limit(_client_ip(request))
+    if not ok:
+        return JSONResponse({"error": message}, status_code=429)
+
+    params = {"expires_in_seconds": 60, "max_session_duration_seconds": 180}
     headers = {"Authorization": f"Bearer {ASSEMBLYAI_API_KEY}"}
 
     async with httpx.AsyncClient(timeout=10) as client:
@@ -143,10 +195,13 @@ async def get_history(limit: int = 20):
     }
 
 
-# New Next.js UI (Phase 3), mounted at /app while the old UI at "/" is still
-# being voice-tested. Must be registered before the "/" mount below, or that
-# mount's prefix match would shadow every /app/* request.
-if os.path.isdir("frontend/out"):
-    app.mount("/app", StaticFiles(directory="frontend/out", html=True), name="frontend")
+# Old static/ UI, kept at /classic for rollback safety. Registered before
+# the "/" mount below, or that mount's prefix match would shadow it.
+app.mount("/classic", StaticFiles(directory="static", html=True), name="classic")
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+# New Next.js UI (Phase 3+5), now the app served at "/".
+if os.path.isdir("frontend/out"):
+    app.mount("/", StaticFiles(directory="frontend/out", html=True), name="frontend")
+else:
+    print("WARNING: frontend/out not found (run 'cd frontend && npm run build'); serving /classic at / instead.")
+    app.mount("/", StaticFiles(directory="static", html=True), name="static-fallback")
